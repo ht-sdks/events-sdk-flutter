@@ -9,9 +9,9 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 The hassle-free way to add Hightouch Events to your Flutter app.
                        DESC
-  s.homepage         = 'http://segment.com'
+  s.homepage         = 'http://hightouch.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Segment' => 'support@segment.com' }
+  s.author           = { 'Hightouch' => 'support@hightouch.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
