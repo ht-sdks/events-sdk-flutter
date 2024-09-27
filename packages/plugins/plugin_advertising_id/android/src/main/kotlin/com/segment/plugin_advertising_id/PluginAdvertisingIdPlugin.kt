@@ -1,4 +1,4 @@
-package com.segment.plugin_advertising_id
+package com.hightouch.plugin_advertising_id
 
 import android.content.Context
 import androidx.annotation.NonNull

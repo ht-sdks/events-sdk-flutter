@@ -1,17 +1,14 @@
-# @segment/analytics-flutter
-
-> **Warning**
-> This project is currently only available in Beta phase and is covered by Segment's First Access & Beta Preview Terms. We encourage you to try out this new library. Please provide feedback via Github issues/PRs, and feel free to submit pull requests.
+# @ht-sdks/events-sdk-flutter
 
 The hassle-free way to add Hightouch Events to your Flutter[^1] app.
 
-This is a monorepo containing all Segment packages
+This is a monorepo containing all Hightouch packages
 
-## Core (`segment_analytics`)
+## Core (`hightouch_events`)
 
-The main [`segment_analytics](http://pub.dev/packages/segment_analytics) package.
+The main [`hightouch_events](http://pub.dev/packages/hightouch_events) package.
 
-[Pub.dev](http://pub.dev/packages/segment_analytics)
+[Pub.dev](http://pub.dev/packages/hightouch_events)
 
 [Docs](packages/core#readme)
 
@@ -75,6 +72,3 @@ Before contributing, please also see our [code of conduct](CODE_OF_CONDUCT.md).
 MIT
 
 [^1]: The Flutter name and logo are trademarks owned by Google.
-
-[circleci-image]: TODO
-[circleci-url]: https://app.circleci.com/pipelines/github/segmentio/analytics-flutter

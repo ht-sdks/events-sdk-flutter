@@ -25,5 +25,5 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.segment.plugin_advertising_id
+        package: com.hightouch.plugin_advertising_id
         pluginClass: PluginAdvertisingIdPlugin

@@ -1,4 +1,4 @@
-group 'com.segment.plugin_advertising_id'
+group 'com.hightouch.plugin_advertising_id'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'com.segment.plugin_advertising_id'
+    namespace 'com.hightouch.plugin_advertising_id'
     compileSdkVersion 31
 
     compileOptions {
