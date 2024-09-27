@@ -1,6 +1,6 @@
 {
-    "name": "analytics_example",
-    "short_name": "analytics_example",
+    "name": "events_example",
+    "short_name": "events_example",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

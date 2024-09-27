@@ -1,4 +1,4 @@
-import 'package:analytics_example/config.dart';
+import 'package:events_example/config.dart';
 import 'package:hightouch_events/event.dart';
 import 'package:hightouch_events/state.dart';
 import 'package:flutter/material.dart';

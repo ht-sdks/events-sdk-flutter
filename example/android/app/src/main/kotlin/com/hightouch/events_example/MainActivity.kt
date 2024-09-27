@@ -1,4 +1,4 @@
-package com.segment.analytics_example
+package com.hightouch.events_example
 
 import io.flutter.embedding.android.FlutterActivity
 

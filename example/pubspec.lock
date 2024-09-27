@@ -112,6 +112,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  hightouch_events:
+    dependency: "direct main"
+    description:
+      path: "../packages/core"
+      relative: true
+    source: path
+    version: "1.1.0"
   http:
     dependency: transitive
     description:
@@ -272,14 +279,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
-  segment_analytics:
-    dependency: "direct main"
-    description:
-      name: segment_analytics
-      sha256: fa6e2df7c5703d0d4830c0629ff6af7e2d1a7fd88c051636c5b82f3a8fc88f55
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   shared_preferences:
     dependency: transitive
     description:
@@ -437,6 +436,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.2.5"
+  web:
+    dependency: transitive
+    description:
+      name: web
+      sha256: "97da13628db363c635202ad97068d47c5b8aa555808e7a9411963c533b449b27"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.1"
   win32:
     dependency: transitive
     description:
