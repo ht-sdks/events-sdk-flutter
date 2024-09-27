@@ -65,7 +65,7 @@ class Analytics with ClientMethods {
 
     state.ready.then((_) => _onStateReady());
 
-    if (config.autoAddSegmentDestination) {
+    if (config.autoAddHightouchDestination) {
       final hightouchDestination = HightouchDestination();
       addPlugin(hightouchDestination);
     }
@@ -124,7 +124,7 @@ class Analytics with ClientMethods {
   }
 
   /// Adds a new plugin to the currently loaded set.
-  /// @param {{ plugin: Plugin, settings?: IntegrationSettings }} Plugin to be added. Settings are optional if you want to force a configuration instead of the Segment Cloud received one
+  /// @param {{ plugin: Plugin, settings?: IntegrationSettings }} Plugin to be added. Settings are optional if you want to force a configuration instead of the Hightouch received one
   void addPlugin(Plugin plugin, {Map<String, dynamic>? settings}) {
     // plugins can either be added immediately or
     // can be cached and added later during the next state update
@@ -240,7 +240,7 @@ class Analytics with ClientMethods {
 
   Future init() async {
     if (_isInitialized) {
-      log("SegmentClient already initialized", kind: LogFilterKind.warning);
+      log("HightouchClient already initialized", kind: LogFilterKind.warning);
       return;
     }
 
@@ -347,13 +347,13 @@ class Analytics with ClientMethods {
   Future _fetchSettings() async {
     final settings = await httpClient.settingsFor(state.configuration.state.writeKey);
     if (settings == null) {
-      log("""Could not receive settings from Segment. ${state.configuration.state.defaultIntegrationSettings != null ? 'Will use the default settings.' : 'Device mode destinations will be ignored unless you specify default settings in the client config.'}""",
+      log("""Could not receive settings from Hightouch. ${state.configuration.state.defaultIntegrationSettings != null ? 'Will use the default settings.' : 'Device mode destinations will be ignored unless you specify default settings in the client config.'}""",
           kind: LogFilterKind.warning);
 
       state.integrations.state = state.configuration.state.defaultIntegrationSettings ?? {};
     } else {
       final integrations = settings.integrations;
-      log("Received settings from Segment succesfully.");
+      log("Received settings from Hightouch succesfully.");
       state.integrations.state = integrations;
     }
   }

@@ -12,9 +12,8 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) => UserInfo(
       groupTraits: json['groupTraits'] == null
           ? null
           : GroupTraits.fromJson(json['groupTraits'] as Map<String, dynamic>),
-      userTraits: json['userTraits'] == null
-          ? null
-          : UserTraits.fromJson(json['userTraits'] as Map<String, dynamic>),
+      userTraits:
+          json['userTraits'] == null ? null : UserTraits.fromJson(json['userTraits'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$UserInfoToJson(UserInfo instance) {
@@ -39,22 +38,19 @@ DeepLinkData _$DeepLinkDataFromJson(Map<String, dynamic> json) => DeepLinkData(
       json['url'] as String,
     );
 
-Map<String, dynamic> _$DeepLinkDataToJson(DeepLinkData instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$DeepLinkDataToJson(DeepLinkData instance) => <String, dynamic>{
       'referringApplication': instance.referringApplication,
       'url': instance.url,
     };
 
-SegmentAPISettings _$SegmentAPISettingsFromJson(Map<String, dynamic> json) =>
-    SegmentAPISettings(
+HightouchAPISettings _$HightouchAPISettingsFromJson(Map<String, dynamic> json) => HightouchAPISettings(
       json['integrations'] as Map<String, dynamic>,
       middlewareSettings: json['middlewareSettings'] == null
           ? null
-          : MiddlewareSettings.fromJson(
-              json['middlewareSettings'] as Map<String, dynamic>),
+          : MiddlewareSettings.fromJson(json['middlewareSettings'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$SegmentAPISettingsToJson(SegmentAPISettings instance) {
+Map<String, dynamic> _$HightouchAPISettingsToJson(HightouchAPISettings instance) {
   final val = <String, dynamic>{
     'integrations': instance.integrations,
   };
@@ -69,16 +65,14 @@ Map<String, dynamic> _$SegmentAPISettingsToJson(SegmentAPISettings instance) {
   return val;
 }
 
-MiddlewareSettings _$MiddlewareSettingsFromJson(Map<String, dynamic> json) =>
-    MiddlewareSettings(
+MiddlewareSettings _$MiddlewareSettingsFromJson(Map<String, dynamic> json) => MiddlewareSettings(
       routingRules: (json['routingRules'] as List<dynamic>?)
               ?.map((e) => RoutingRule.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
     );
 
-Map<String, dynamic> _$MiddlewareSettingsToJson(MiddlewareSettings instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MiddlewareSettingsToJson(MiddlewareSettings instance) => <String, dynamic>{
       'routingRules': instance.routingRules.map((e) => e.toJson()).toList(),
     };
 
@@ -91,9 +85,8 @@ RoutingRule _$RoutingRuleFromJson(Map<String, dynamic> json) => RoutingRule(
               .toList() ??
           const [],
       transformers: (json['transformers'] as List<dynamic>?)
-              ?.map((e) => (e as List<dynamic>)
-                  .map((e) => Transformer.fromJson(e as Map<String, dynamic>))
-                  .toList())
+              ?.map((e) =>
+                  (e as List<dynamic>).map((e) => Transformer.fromJson(e as Map<String, dynamic>)).toList())
               .toList() ??
           const [],
     );
@@ -103,9 +96,7 @@ Map<String, dynamic> _$RoutingRuleToJson(RoutingRule instance) {
     'scope': instance.scope,
     'target_type': instance.targetType,
     'matchers': instance.matchers.map((e) => e.toJson()).toList(),
-    'transformers': instance.transformers
-        .map((e) => e.map((e) => e.toJson()).toList())
-        .toList(),
+    'transformers': instance.transformers.map((e) => e.map((e) => e.toJson()).toList()).toList(),
   };
 
   void writeNotNull(String key, dynamic value) {
@@ -130,9 +121,8 @@ Map<String, dynamic> _$MatcherToJson(Matcher instance) => <String, dynamic>{
 
 Transformer _$TransformerFromJson(Map<String, dynamic> json) => Transformer(
       json['type'] as String,
-      config: json['config'] == null
-          ? null
-          : TransformerConfig.fromJson(json['config'] as Map<String, dynamic>),
+      config:
+          json['config'] == null ? null : TransformerConfig.fromJson(json['config'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$TransformerToJson(Transformer instance) {
@@ -150,24 +140,19 @@ Map<String, dynamic> _$TransformerToJson(Transformer instance) {
   return val;
 }
 
-TransformerConfig _$TransformerConfigFromJson(Map<String, dynamic> json) =>
-    TransformerConfig(
+TransformerConfig _$TransformerConfigFromJson(Map<String, dynamic> json) => TransformerConfig(
       allow: (json['allow'] as Map<String, dynamic>?)?.map(
-        (k, e) =>
-            MapEntry(k, (e as List<dynamic>).map((e) => e as String).toList()),
+        (k, e) => MapEntry(k, (e as List<dynamic>).map((e) => e as String).toList()),
       ),
       drop: (json['drop'] as Map<String, dynamic>?)?.map(
-        (k, e) =>
-            MapEntry(k, (e as List<dynamic>).map((e) => e as String).toList()),
+        (k, e) => MapEntry(k, (e as List<dynamic>).map((e) => e as String).toList()),
       ),
       map: (json['map'] as Map<String, dynamic>?)?.map(
-        (k, e) => MapEntry(
-            k, TransformerConfigMap.fromJson(e as Map<String, dynamic>)),
+        (k, e) => MapEntry(k, TransformerConfigMap.fromJson(e as Map<String, dynamic>)),
       ),
       sample: json['sample'] == null
           ? null
-          : TransformerConfigSample.fromJson(
-              json['sample'] as Map<String, dynamic>),
+          : TransformerConfigSample.fromJson(json['sample'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$TransformerConfigToJson(TransformerConfig instance) {
@@ -186,31 +171,25 @@ Map<String, dynamic> _$TransformerConfigToJson(TransformerConfig instance) {
   return val;
 }
 
-TransformerConfigSample _$TransformerConfigSampleFromJson(
-        Map<String, dynamic> json) =>
+TransformerConfigSample _$TransformerConfigSampleFromJson(Map<String, dynamic> json) =>
     TransformerConfigSample(
       json['percent'] as int,
       json['path'] as String,
     );
 
-Map<String, dynamic> _$TransformerConfigSampleToJson(
-        TransformerConfigSample instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$TransformerConfigSampleToJson(TransformerConfigSample instance) => <String, dynamic>{
       'percent': instance.percent,
       'path': instance.path,
     };
 
-TransformerConfigMap _$TransformerConfigMapFromJson(
-        Map<String, dynamic> json) =>
-    TransformerConfigMap(
+TransformerConfigMap _$TransformerConfigMapFromJson(Map<String, dynamic> json) => TransformerConfigMap(
       copy: json['copy'] as String?,
       move: json['move'] as String?,
       set: json['set'],
       enableToString: json['to_string'] as bool?,
     );
 
-Map<String, dynamic> _$TransformerConfigMapToJson(
-    TransformerConfigMap instance) {
+Map<String, dynamic> _$TransformerConfigMapToJson(TransformerConfigMap instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {

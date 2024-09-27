@@ -60,7 +60,7 @@ class HTTPClient {
     }
   }
 
-  Future<SegmentAPISettings?> settingsFor(String writeKey) async {
+  Future<HightouchAPISettings?> settingsFor(String writeKey) async {
     final settingsURL =
         _url(_analytics.target!.state.configuration.state.cdnHost, "/projects/$writeKey/settings");
     final urlRequest = _configuredRequest(settingsURL, "GET");
@@ -75,7 +75,7 @@ class HTTPClient {
       final data = await response.stream.toBytes();
       const decoder = JsonDecoder();
       final jsonMap = decoder.convert(utf8.decode(data)) as Map<String, dynamic>;
-      return SegmentAPISettings.fromJson(jsonMap);
+      return HightouchAPISettings.fromJson(jsonMap);
     } catch (error) {
       reportInternalError(NetworkUnknown(error.toString()), analytics: _analytics.target);
       return null;

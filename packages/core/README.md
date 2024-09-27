@@ -74,10 +74,10 @@ In your app's `AndroidManifest.xml` add the below line between the `<manifest>` 
 
 ### Setting up the client
 
-The package exposes a method called `createClient` which we can use to create the Segment Analytics client. This central client manages all our tracking events. It is recommended you add this as a property on your main app's state class.
+The package exposes a method called `createClient` which we can use to create the Hightouch Events client. This central client manages all our tracking events. It is recommended you add this as a property on your main app's state class.
 
 ```dart
-const writeKey = 'SEGMENT_API_KEY';
+const writeKey = 'WRITE_KEY';
 final analytics = createClient(Configuration(writeKey));
 ```
 
@@ -87,7 +87,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 
 | Name                              | Default                       | Description                                                                                                                                                                                                                                                                     |
 | --------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `writeKey` **(REQUIRED)**         | ''                            | Your Segment API key.                                                                                                                                                                                                                                                           |
+| `writeKey` **(REQUIRED)**         | ''                            | Your Hightouch Events write key.                                                                                                                                                                                                                                                           |
 | `debug`                           | false                         | When set to false, it will not generate any info logs.                                                                                                                                                                                                                          |
 | `collectDeviceId`                 | false                         | Set to true to automatically collect the device ID from the DRM API on Android devices.                                                                                                                                                                                         |
 | `flushPolicies`                   | count=30,time=20s             | List of flush policies controlling when to send batches of events to the plugins                                                                                                                                                                                                |
@@ -96,8 +96,8 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `errorHandler`                    | null                          | Custom error handler. By default logs errors to the standard flutter logger                                                                                                                                                                                                     |
 | `trackApplicationLifecycleEvents` | false                         | Enable automatic tracking for app lifecycle events: application installed, opened, updated, backgrounded)                                                                                                 |
 | `trackDeeplinks`                  | false                         | Enable automatic tracking for when the user opens the app via a deep link. \*NOTE: when sending this flag, the sdk plugin_appsflyer will ignore [onAppOpenAttribution](https://github.com/AppsFlyerSDK/appsflyer-flutter-plugin/blob/master/doc/Guides.md#Unified-deep-linking) |
-| `autoAddSegmentDestination`       | true                          | Set to false to skip adding the SegmentDestination plugin                                                                                                                                                                                                                       |
-| `defaultIntegrationSettings`      | null                          | Plugin settings that will be used if the request to get the settings from Segment fails.                                                                                                                                                                                        |
+| `autoAddHightouchDestination`       | true                          | Set to false to skip adding the HightouchDestination plugin                                                                                                                                                                                                                       |
+| `defaultIntegrationSettings`      | null                          | Plugin settings that will be used if the request to get the settings from Hightouch fails.                                                                                                                                                                                        |
 | `maxBatchSize`                    | true                          | 100 Maximum number of events to send to the API at once.                                                                                                                                                                                                                        |
 | `appStateStream`                  | null                          | Set to override the stream of application foreground or background events.                                                                                                                                                                                                      |
 | `requestFactory`                  | true                          | Set to override the factory to generate HTTP requests. Type: [RequestFactory](https://github.com/ht-sdks/events-sdk-flutter/blob/master/packages/core/lib/state.dart#L546)                                                                                                     |
@@ -180,7 +180,7 @@ Example usage:
 
 ```dart
 analytics.group("some-company", groupTraits: GroupTraits(
-  name: 'Segment',
+  name: 'Hightouch',
   custom: {
     "region": "UK"
   }
@@ -253,7 +253,7 @@ analytics = createClient(Configuration(writeKey));
 
 If you don't do this, the old client instance would still exist and retain the timers, making all your events fire twice.
 
-Ideally, you shouldn't need this though, and the Segment client should be initialized only once in the application lifecycle.
+Ideally, you shouldn't need this though, and the Hightouch client should be initialized only once in the application lifecycle.
 
 ## Automatic screen tracking
 
@@ -267,7 +267,7 @@ return MaterialApp(navigatorObservers: [
 
 ## Plugins + Timeline architecture
 
-You have complete control over how the events are processed before being uploaded to the Segment API.
+You have complete control over how the events are processed before being uploaded to the Hightouch Events API.
 
 In order to customise what happens after an event is created, you can create and place various Plugins along the processing pipeline that an event goes through. This pipeline is referred to as a Timeline.
 
@@ -285,9 +285,9 @@ Plugins can have their own native code (such as the iOS-only `analytics_plugin_i
 
 ### Destination Plugins
 
-Segment is included as a `DestinationPlugin` out of the box. You can add as many other DestinationPlugins as you like, and upload events and data to them in addition to Segment.
+Hightouch is included as a `DestinationPlugin` out of the box. You can add as many other DestinationPlugins as you like, and upload events and data to them in addition to Hightouch.
 
-Or if you prefer, you can pass `autoAddSegmentDestination = false` in the options when setting up your client. This prevents the SegmentDestination plugin from being added automatically for you.
+Or if you prefer, you can pass `autoAddHightouchDestination = false` in the options when setting up your client. This prevents the HightouchDestination plugin from being added automatically for you.
 
 ### Adding Plugins
 
@@ -302,7 +302,7 @@ import 'package:hightouch_events_plugin_idfa/plugin_idfa.dart';
 import 'package:hightouch_events_plugin_firebase/plugin_firebase.dart'
     show FirebaseDestination;
 
-const writeKey = 'SEGMENT_API_KEY';
+const writeKey = 'WRITE_KEY';
 
 class _MyAppState extends State<MyApp> {
   final analytics = createClient(Configuration(writeKey));
@@ -379,7 +379,7 @@ Refer to the following table for Plugins you can use to meet your tracking needs
 
 To more granurily control when events are uploaded you can use `FlushPolicies`
 
-A Flush Policy defines the strategy for deciding when to flush, this can be on an interval, on a certain time of day, after receiving a certain number of events or even after receiving a particular event. This gives you even more flexibility on when to send event to Segment.
+A Flush Policy defines the strategy for deciding when to flush, this can be on an interval, on a certain time of day, after receiving a certain number of events or even after receiving a particular event. This gives you even more flexibility on when to send event to Hightouch.
 
 To make use of flush policies you can set them in the configuration of the client:
 
@@ -479,13 +479,13 @@ class CustomLogger with LogTarget {
   void parseLog(LogMessage log) {
     switch (log.kind) {
       case LogFilterKind.debug:
-        customDebugLog("Segment: ${log.message}");
+        customDebugLog("Hightouch: ${log.message}");
         break;
       case LogFilterKind.warning:
-        customWarningLog("Segment: ${log.message}");
+        customWarningLog("Hightouch: ${log.message}");
         break;
       case LogFilterKind.error:
-        customErrorLog("Segment: ${log.message}");
+        customErrorLog("Hightouch: ${log.message}");
         break;
     }
   }

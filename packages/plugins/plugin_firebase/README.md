@@ -1,4 +1,4 @@
-# segment_analytics_plugin_firebase
+# hightouch_events_plugin_firebase
 
 `DestinationPlugin` for [Firebase](https://firebase.google.com). Wraps [`firebase_analytics`](https://pub.dev/packages/firebase_analytics).
 

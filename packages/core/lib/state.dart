@@ -373,14 +373,14 @@ class ContextState extends PersistedState<Context?> {
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
-class SegmentAPISettings {
+class HightouchAPISettings {
   final Map<String, dynamic> integrations;
   final MiddlewareSettings? middlewareSettings;
 
-  SegmentAPISettings(this.integrations, {this.middlewareSettings});
+  HightouchAPISettings(this.integrations, {this.middlewareSettings});
 
-  factory SegmentAPISettings.fromJson(Map<String, dynamic> json) => _$SegmentAPISettingsFromJson(json);
-  Map<String, dynamic> toJson() => _$SegmentAPISettingsToJson(this);
+  factory HightouchAPISettings.fromJson(Map<String, dynamic> json) => _$HightouchAPISettingsFromJson(json);
+  Map<String, dynamic> toJson() => _$HightouchAPISettingsToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
@@ -509,7 +509,7 @@ class Configuration {
 
   final int? maxBatchSize;
   final Map<String, dynamic>? defaultIntegrationSettings;
-  final bool autoAddSegmentDestination;
+  final bool autoAddHightouchDestination;
   final String? apiHost;
   final String cdnHost;
 
@@ -522,7 +522,7 @@ class Configuration {
 
   Configuration(this.writeKey,
       {this.apiHost,
-      this.autoAddSegmentDestination = true,
+      this.autoAddHightouchDestination = true,
       this.collectDeviceId = false,
       this.cdnHost = HTTPClient.defaultCDNHost,
       this.defaultIntegrationSettings,
@@ -544,7 +544,7 @@ typedef RequestFactory = Request Function(Request);
 Configuration setFlushPolicies(Configuration a, List<FlushPolicy> flushPolicies) {
   return Configuration(a.writeKey,
       apiHost: a.apiHost,
-      autoAddSegmentDestination: a.autoAddSegmentDestination,
+      autoAddHightouchDestination: a.autoAddHightouchDestination,
       cdnHost: a.cdnHost,
       debug: a.debug,
       defaultIntegrationSettings: a.defaultIntegrationSettings,

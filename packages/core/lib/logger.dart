@@ -7,7 +7,7 @@ import 'package:logger/logger.dart';
 mixin LogTarget {
   /// Implement this method to process logging messages. This is where the logic for the target will be
   /// added. Feel free to add your own data queueing and offline storage.
-  /// - important: Use the Segment Network stack for Segment library compatibility and simplicity.
+  /// - important: Use the Hightouch Network stack for library compatibility and simplicity.
   void parseLog(LogMessage log);
 }
 
@@ -71,13 +71,13 @@ class SystemLogger with LogTarget {
   void parseLog(LogMessage log) {
     switch (log.kind) {
       case LogFilterKind.debug:
-        logger.d("Segment: ${log.message}");
+        logger.d("Hightouch: ${log.message}");
         break;
       case LogFilterKind.warning:
-        logger.w("Segment: ${log.message}");
+        logger.w("Hightouch: ${log.message}");
         break;
       case LogFilterKind.error:
-        logger.e("Segment: ${log.message}");
+        logger.e("Hightouch: ${log.message}");
         break;
     }
   }

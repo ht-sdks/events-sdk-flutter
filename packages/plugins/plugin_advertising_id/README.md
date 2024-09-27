@@ -1,4 +1,4 @@
-# segment_analytics_plugin_advertising_id
+# hightouch_events_plugin_advertising_id
 
 `EnrichmentPlugin` to collect advertisingId on Android
 

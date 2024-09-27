@@ -3,7 +3,7 @@
 > **Warning**
 > This project is currently only available in Beta phase and is covered by Segment's First Access & Beta Preview Terms. We encourage you to try out this new library. Please provide feedback via Github issues/PRs, and feel free to submit pull requests.
 
-The hassle-free way to add Segment analytics to your Flutter[^1] app.
+The hassle-free way to add Hightouch Events to your Flutter[^1] app.
 
 This is a monorepo containing all Segment packages
 
@@ -17,33 +17,33 @@ The main [`segment_analytics](http://pub.dev/packages/segment_analytics) package
 
 ## Plugins
 
-### Adjust (`segment_analytics_plugin_adjust`)
+### Adjust (`hightouch_events_plugin_adjust`)
 
-[Pub.dev](http://pub.dev/packages/segment_analytics_plugin_adjust)
+[Pub.dev](http://pub.dev/packages/hightouch_events_plugin_adjust)
 
 [Docs](packages/plugins/plugin_adjust#readme)
 
-### AdvertisingID (`segment_analytics_plugin_advertising_id`)
+### AdvertisingID (`hightouch_events_plugin_advertising_id`)
 
-[Pub.dev](http://pub.dev/packages/segment_analytics_plugin_advertising_id)
+[Pub.dev](http://pub.dev/packages/hightouch_events_plugin_advertising_id)
 
 [Docs](packages/plugins/plugin_advertising_id#readme)
 
-### AppsFlyer (`segment_analytics_plugin_appsflyer`)
+### AppsFlyer (`hightouch_events_plugin_appsflyer`)
 
-[Pub.dev](http://pub.dev/packages/segment_analytics_plugin_appsflyer)
+[Pub.dev](http://pub.dev/packages/hightouch_events_plugin_appsflyer)
 
 [Docs](packages/plugins/plugin_appsflyer#readme)
 
-### Firebase (`segment_analytics_plugin_firebase`)
+### Firebase (`hightouch_events_plugin_firebase`)
 
-[Pub.dev](http://pub.dev/packages/segment_analytics_plugin_firebase)
+[Pub.dev](http://pub.dev/packages/hightouch_events_plugin_firebase)
 
 [Docs](packages/plugins/plugin_firebase#readme)
 
-### IDFA (`segment_analytics_plugin_idfa`)
+### IDFA (`hightouch_events_plugin_idfa`)
 
-[Pub.dev](http://pub.dev/packages/segment_analytics_plugin_idfa)
+[Pub.dev](http://pub.dev/packages/hightouch_events_plugin_idfa)
 
 [Docs](packages/plugins/plugin_idfa#readme)
 

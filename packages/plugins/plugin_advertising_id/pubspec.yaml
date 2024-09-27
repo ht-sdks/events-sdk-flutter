@@ -1,18 +1,18 @@
-name: segment_analytics_plugin_advertising_id
-description: The hassle-free way to add Segment analytics to your Flutter app.
+name: hightouch_events_plugin_advertising_id
+description: The hassle-free way to add Hightouch Events to your Flutter app.
 version: 1.0.0
 homepage: https://github.com/segmentio/analytics_flutter#readme
 repository: https://github.com/segmentio/analytics_flutter/tree/main/packages/plugins/plugin_advertising_id#readme
 issue_tracker: https://github.com/segmentio/analytics_flutter/issues
 
 environment:
-  sdk: '>=2.19.3 <4.0.0'
+  sdk: ">=2.19.3 <4.0.0"
   flutter: ">=2.5.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  segment_analytics: ^1.0.0
+  hightouch_events: ^1.0.0
   plugin_platform_interface: ^2.0.2
 
 dev_dependencies:

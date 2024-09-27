@@ -1,4 +1,4 @@
-# segment_analytics_plugin_adjust
+# hightouch_events_plugin_adjust
 
 `DestinationPlugin` for [Adjust](https://www.adjust.com/). Wraps [`adjust_sdk`](https://pub.dev/packages/adjust_sdk).
 

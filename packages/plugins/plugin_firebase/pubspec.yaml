@@ -1,12 +1,12 @@
-name: segment_analytics_plugin_firebase
-description: The hassle-free way to add Segment analytics to your Flutter app.
+name: hightouch_events_plugin_firebase
+description: The hassle-free way to add Hightouch Events to your Flutter app.
 version: 1.0.0
 homepage: https://github.com/segmentio/analytics_flutter#readme
 repository: https://github.com/segmentio/analytics_flutter/tree/main/packages/plugins/plugin_firebase#readme
 issue_tracker: https://github.com/segmentio/analytics_flutter/issues
 
 environment:
-  sdk: '>=2.19.2 <4.0.0'
+  sdk: ">=2.19.2 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
@@ -15,7 +15,7 @@ dependencies:
   flutter:
     sdk: flutter
   json_annotation: ^4.8.0
-  segment_analytics: ^1.0.0
+  hightouch_events: ^1.0.0
 
 dev_dependencies:
   build_runner: ^2.3.3

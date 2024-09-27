@@ -428,14 +428,14 @@ class MockHTTPClient extends _i1.Mock implements _i9.HTTPClient {
       ) as _i4.Future<bool>);
 
   @override
-  _i4.Future<_i11.SegmentAPISettings?> settingsFor(String? writeKey) => (super.noSuchMethod(
+  _i4.Future<_i11.HightouchAPISettings?> settingsFor(String? writeKey) => (super.noSuchMethod(
         Invocation.method(
           #settingsFor,
           [writeKey],
         ),
-        returnValue: _i4.Future<_i11.SegmentAPISettings?>.value(),
-        returnValueForMissingStub: _i4.Future<_i11.SegmentAPISettings?>.value(),
-      ) as _i4.Future<_i11.SegmentAPISettings?>);
+        returnValue: _i4.Future<_i11.HightouchAPISettings?>.value(),
+        returnValueForMissingStub: _i4.Future<_i11.HightouchAPISettings?>.value(),
+      ) as _i4.Future<_i11.HightouchAPISettings?>);
 }
 
 /// A class which mocks [Store].

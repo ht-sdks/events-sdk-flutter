@@ -10,7 +10,7 @@ class MockPlatform extends AnalyticsPlatform {
   Future<NativeContext> getContext({bool collectDeviceId = false}) {
     final mockNativeContext = NativeContext();
     mockNativeContext.app = NativeContextApp();
-    mockNativeContext.app!.name = "Segment Example";
+    mockNativeContext.app!.name = "Hightouch Example";
     mockNativeContext.app!.version = "1.0";
     mockNativeContext.locale = "en_GB";
     mockNativeContext.os = NativeContextOS();
@@ -63,7 +63,7 @@ void main() {
       final reverseContextJson = jsonDecode(contextStr);
       final reverseContext = Context.fromJson(reverseContextJson);
 
-      expect(context.app.name, "Segment Example");
+      expect(context.app.name, "Hightouch Example");
       expect(context.app.name, reverseContext.app.name);
 
       expect(context.traits.firstName, "Christy");

@@ -32,7 +32,7 @@ void main() {
 
     test("it fetches settings but does not fire track event when not tracking lifecycle events", () async {
       final httpClient = Mocks.httpClient();
-      when(httpClient.settingsFor(writeKey)).thenAnswer((_) => Future.value(SegmentAPISettings({})));
+      when(httpClient.settingsFor(writeKey)).thenAnswer((_) => Future.value(HightouchAPISettings({})));
       when(httpClient.startBatchUpload(writeKey, batch)).thenAnswer((_) => Future.value(true));
 
       Analytics analytics = Analytics(
@@ -47,7 +47,7 @@ void main() {
     });
     test("it fetches settings and fires track event when tracking lifecycle events", () async {
       final httpClient = Mocks.httpClient();
-      when(httpClient.settingsFor(writeKey)).thenAnswer((_) => Future.value(SegmentAPISettings({})));
+      when(httpClient.settingsFor(writeKey)).thenAnswer((_) => Future.value(HightouchAPISettings({})));
       when(httpClient.startBatchUpload(writeKey, batch)).thenAnswer((_) => Future.value(true));
 
       Analytics analytics = Analytics(
