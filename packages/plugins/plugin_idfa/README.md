@@ -23,11 +23,11 @@ You also need to ensure you have a description for `NSUserTrackingUsageDescripti
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics_flutter_#adding-plugins) on the main Analytics client:
 
-In your code where you initialize the analytics client call the `.add(plugin)` method with an `PluginIdfa` instance. 
+In your code where you initialize the analytics client call the `.add(plugin)` method with an `PluginIdfa` instance.
 
 ```dart
-import 'package:segment_analytics/client.dart';
-import 'package:segment_analytics_plugin_idfa/plugin_idfa.dart'
+import 'package:hightouch_events/client.dart';
+import 'package:hightouch_events_plugin_idfa/plugin_idfa.dart'
     show PluginIdfa;
 
 const writeKey = 'SEGMENT_API_KEY';
@@ -50,8 +50,8 @@ class _MyAppState extends State<MyApp> {
 To delay the `IDFA Plugin` initialization (ie. to avoid race condition with push notification prompt) implement the following:
 
 ```dart
-import 'package:segment_analytics/client.dart';
-import 'package:segment_analytics_plugin_idfa/plugin_idfa.dart'
+import 'package:hightouch_events/client.dart';
+import 'package:hightouch_events_plugin_idfa/plugin_idfa.dart'
     show PluginIdfa;
 
 const writeKey = 'SEGMENT_API_KEY';

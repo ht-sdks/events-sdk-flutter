@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:segment_analytics/errors.dart';
+import 'package:hightouch_events/errors.dart';
 
 import 'store.dart';
 

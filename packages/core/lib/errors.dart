@@ -1,5 +1,5 @@
-import 'package:segment_analytics/analytics.dart';
-import 'package:segment_analytics/logger.dart';
+import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/logger.dart';
 
 class StorageUnableToCreate implements Exception {
   final String msg;
@@ -116,8 +116,7 @@ class ErrorLoadingStorage implements Exception {
   String toString() => "Error loading storage: $innerError";
 }
 
-void reportInternalError(Exception error,
-    {bool fatal = false, Analytics? analytics}) {
+void reportInternalError(Exception error, {bool fatal = false, Analytics? analytics}) {
   log("An internal error occurred: $error", kind: LogFilterKind.error);
 
   final errorHandler = analytics?.state.configuration.state.errorHandler;

@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:segment_analytics/analytics.dart';
-import 'package:segment_analytics/plugin.dart';
+import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/plugin.dart';
 
 import 'plugin_advertising_id_platform_interface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -22,8 +22,7 @@ class PluginAdvertisingId extends Plugin {
 
     PluginAdvertisingIdPlatform.instance.getAdvertisingId().then((id) {
       if (id == null) {
-        analytics
-            .track('LimitAdTrackingEnabled (Google Play Services) is enabled');
+        analytics.track('LimitAdTrackingEnabled (Google Play Services) is enabled');
       } else {
         setContext(id);
       }

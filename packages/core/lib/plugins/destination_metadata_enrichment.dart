@@ -1,9 +1,8 @@
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/plugin.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/plugin.dart';
 
 class DestinationMetadataEnrichment extends UtilityPlugin {
-  DestinationMetadataEnrichment(this._destinationKey)
-      : super(PluginType.enrichment);
+  DestinationMetadataEnrichment(this._destinationKey) : super(PluginType.enrichment);
 
   final String _destinationKey;
 
@@ -17,8 +16,7 @@ class DestinationMetadataEnrichment extends UtilityPlugin {
     }
 
     // Disable all destinations that have a device mode plugin
-    final destinations =
-        plugins?.map((plugin) => (plugin as DestinationPlugin).key) ?? [];
+    final destinations = plugins?.map((plugin) => (plugin as DestinationPlugin).key) ?? [];
     final bundled = <String>{};
 
     for (var key in destinations) {
@@ -32,9 +30,8 @@ class DestinationMetadataEnrichment extends UtilityPlugin {
     }
 
     final unbundled = <String>{};
-    final segmentInfo = pluginSettings[_destinationKey] ?? {};
-    List<dynamic> unbundledIntegrations =
-        segmentInfo["unbundledIntegrations"] ?? [];
+    final hightouchInfo = pluginSettings[_destinationKey] ?? {};
+    List<dynamic> unbundledIntegrations = hightouchInfo["unbundledIntegrations"] ?? [];
 
     // All active integrations, not in `bundled` are put in `unbundled`
     // All unbundledIntegrations not in `bundled` are put in `unbundled`
@@ -50,10 +47,8 @@ class DestinationMetadataEnrichment extends UtilityPlugin {
     }
 
     // User/event defined integrations override the cloud/device mode merge
-    event.metadata = DestinationMetadata(
-        bundled: bundled.toList(),
-        unbundled: unbundled.toList(),
-        bundledIds: []);
+    event.metadata =
+        DestinationMetadata(bundled: bundled.toList(), unbundled: unbundled.toList(), bundledIds: []);
 
     return event;
   }

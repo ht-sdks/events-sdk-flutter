@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:segment_analytics/errors.dart';
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/plugin.dart';
-import 'package:segment_analytics/logger.dart';
-import 'package:segment_analytics/utils/queue.dart';
+import 'package:hightouch_events/errors.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/plugin.dart';
+import 'package:hightouch_events/logger.dart';
+import 'package:hightouch_events/utils/queue.dart';
 
 typedef TimelinePlugins = Map<PluginType, List<Plugin>>;
 typedef PluginClosure = void Function(Plugin);
@@ -42,10 +42,7 @@ class Timeline {
 
     plugin.analytics?.state.integrations.addListener((newIntegrations) {
       plugin.update(
-          newIntegrations,
-          hasInitialSettings
-              ? ContextUpdateType.refresh
-              : ContextUpdateType.initial);
+          newIntegrations, hasInitialSettings ? ContextUpdateType.refresh : ContextUpdateType.initial);
       hasInitialSettings = true;
     });
   }
@@ -78,8 +75,7 @@ class Timeline {
     }
 
     // .enrichment here is akin to source middleware in the old analytics-ios.
-    final enrichmentResult =
-        await applyPlugins(PluginType.enrichment, beforeResult);
+    final enrichmentResult = await applyPlugins(PluginType.enrichment, beforeResult);
 
     if (enrichmentResult == null) {
       return null;
@@ -111,13 +107,10 @@ class Timeline {
             }
           } catch (error) {
             reportInternalError(
-                PluginError(
-                    "Destination ${(plugin as DestinationPlugin).key} failed to execute",
-                    error),
+                PluginError("Destination ${(plugin as DestinationPlugin).key} failed to execute", error),
                 analytics: plugin.analytics);
             if (plugin.type == PluginType.destination) {
-              log("Destination ${plugin.key} failed to execute: $error",
-                  kind: LogFilterKind.warning);
+              log("Destination ${plugin.key} failed to execute: $error", kind: LogFilterKind.warning);
             }
           }
         }

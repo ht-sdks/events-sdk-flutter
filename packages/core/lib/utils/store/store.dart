@@ -1,4 +1,4 @@
-import 'package:segment_analytics/utils/store/impl.dart';
+import 'package:hightouch_events/utils/store/impl.dart';
 
 mixin Store {
   Future<Map<String, dynamic>?> getPersisted(String key);

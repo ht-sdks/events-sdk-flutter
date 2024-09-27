@@ -19,11 +19,11 @@ import WebKit
 
 internal class iOSVendorSystem: VendorSystem {
     private let device = UIDevice.current
-    
+
     override var manufacturer: String {
         return "Apple"
     }
-    
+
     override var type: String {
         #if os(iOS)
         return "ios"
@@ -35,38 +35,38 @@ internal class iOSVendorSystem: VendorSystem {
         return "unknown"
         #endif
     }
-    
+
     override var model: String {
         // eg. "iPhone5,1"
         return deviceModel()
     }
-    
+
     override var name: String {
         // eg. "iPod Touch"
         return device.model
     }
-    
+
     override var identifierForVendor: String? {
         return device.identifierForVendor?.uuidString
     }
-    
+
     override var systemName: String {
         return device.systemName
     }
-    
+
     override var systemVersion: String {
         device.systemVersion
     }
-    
+
     override var screenSize: ScreenSize {
         let screenSize = UIScreen.main.bounds.size
         return ScreenSize(width: Double(screenSize.width), height: Double(screenSize.height))
     }
-    
+
     override var userAgent: String? {
         #if !os(tvOS)
         var userAgent: String?
-        
+
         if Thread.isMainThread {
             userAgent = WKWebView().value(forKey: "userAgent") as? String
         } else {
@@ -81,11 +81,11 @@ internal class iOSVendorSystem: VendorSystem {
         return "unknown"
         #endif
     }
-    
+
     override var connection: ConnectionStatus {
         return connectionStatus()
     }
-    
+
     private func deviceModel() -> String {
         var name: [Int32] = [CTL_HW, HW_MACHINE]
         var size: Int = 2
@@ -108,48 +108,48 @@ import Network
 
 internal class watchOSVendorSystem: VendorSystem {
     private let device = WKInterfaceDevice.current()
-    
+
     override var manufacturer: String {
         return "Apple"
     }
-    
+
     override var type: String {
         return "watchos"
     }
-    
+
     override var model: String {
         return deviceModel()
     }
-    
+
     override var name: String {
         return device.model
     }
-    
+
     override var identifierForVendor: String? {
         return device.identifierForVendor?.uuidString
     }
-    
+
     override var systemName: String {
         return device.systemName
     }
-    
+
     override var systemVersion: String {
         device.systemVersion
     }
-    
+
     override var screenSize: ScreenSize {
         let screenSize = device.screenBounds.size
         return ScreenSize(width: Double(screenSize.width), height: Double(screenSize.height))
     }
-    
+
     override var userAgent: String? {
         return nil
     }
-    
+
     override var connection: ConnectionStatus {
         let path = NWPathMonitor().currentPath
         let interfaces = path.availableInterfaces
-        
+
         var cellular = false
         var wifi = false
         for interface in interfaces {
@@ -166,7 +166,7 @@ internal class watchOSVendorSystem: VendorSystem {
         }
         return ConnectionStatus.unknown
     }
-    
+
     private func deviceModel() -> String {
         var name: [Int32] = [CTL_HW, HW_MACHINE]
         var size: Int = 2
@@ -190,45 +190,45 @@ import WebKit
 
 internal class MacOSVendorSystem: VendorSystem {
     private let device = ProcessInfo.processInfo
-    
+
     override var manufacturer: String {
         return "Apple"
     }
-    
+
     override var type: String {
         return "macos"
     }
-    
+
     override var model: String {
         return deviceModel()
     }
-    
+
     override var name: String {
         return device.hostName
     }
-    
+
     override var identifierForVendor: String? {
         // apple suggested to use this for receipt validation
         // in MAS, works for this too.
         return macAddress(bsd: "en0")
     }
-    
+
     override var systemName: String {
         return "macOS"
     }
-    
+
     override var systemVersion: String {
         return String(format: "%ld.%ld.%ld",
                       device.operatingSystemVersion.majorVersion,
                       device.operatingSystemVersion.minorVersion,
                       device.operatingSystemVersion.patchVersion)
     }
-    
+
     override var screenSize: ScreenSize {
         let screenSize = NSScreen.main?.frame.size ?? CGSize(width: 0, height: 0)
         return ScreenSize(width: Double(screenSize.width), height: Double(screenSize.height))
     }
-    
+
     override var userAgent: String? {
         var userAgent: String?
         if Thread.isMainThread {
@@ -238,14 +238,14 @@ internal class MacOSVendorSystem: VendorSystem {
               userAgent = WKWebView().value(forKey: "userAgent") as? String
             }
         }
-        
+
         return userAgent
     }
-    
+
     override var connection: ConnectionStatus {
         return connectionStatus()
     }
-    
+
     private func deviceModel() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -323,7 +323,7 @@ extension ConnectionStatus {
             #else
             self = .online(.wifi)
             #endif
-            
+
         } else {
             self =  .offline
         }

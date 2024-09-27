@@ -1,9 +1,9 @@
 import 'package:analytics_example/config.dart';
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/state.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/state.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:segment_analytics/client.dart';
+import 'package:hightouch_events/client.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,8 +17,7 @@ class MyApp extends MaterialApp {
 }
 
 class _MyAppState extends State<MyApp> {
-  final analytics = createClient(Configuration(writeKey,
-      debug: true, trackApplicationLifecycleEvents: true));
+  final analytics = createClient(Configuration(writeKey, debug: true, trackApplicationLifecycleEvents: true));
 
   @override
   void initState() {
@@ -44,8 +43,7 @@ class _MyAppState extends State<MyApp> {
               title: const Text('Plugin example app'),
             ),
             body: Center(
-                child:
-                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, "/next");
@@ -54,15 +52,13 @@ class _MyAppState extends State<MyApp> {
               ),
               TextButton(
                 onPressed: () {
-                  analytics
-                      .track("Test Event", properties: {"prop1": "value1"});
+                  analytics.track("Test Event", properties: {"prop1": "value1"});
                 },
                 child: const Text('Track Product Viewed'),
               ),
               TextButton(
                 onPressed: () {
-                  analytics.track('Products Searched',
-                      properties: {"query": 'blue roses'});
+                  analytics.track('Products Searched', properties: {"query": 'blue roses'});
                   analytics.track('Product List Viewed', properties: {
                     "list_id": 'hot_deals_1',
                     "category": 'Deals',
@@ -153,8 +149,7 @@ class _MyAppState extends State<MyApp> {
               title: const Text('Plugin example app'),
             ),
             body: Center(
-                child:
-                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -163,9 +158,7 @@ class _MyAppState extends State<MyApp> {
               ),
               TextButton(
                 onPressed: () {
-                  analytics.identify(
-                      userId: "testUserId",
-                      userTraits: UserTraits(name: "Test User"));
+                  analytics.identify(userId: "testUserId", userTraits: UserTraits(name: "Test User"));
                 },
                 child: const Text('Identify Event'),
               ),

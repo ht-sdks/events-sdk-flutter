@@ -22,8 +22,8 @@ Follow the [instructions for adding plugins](https://github.com/segmentio/analyt
 In your code where you initialize the analytics client call the `.add(plugin)` method with an `AppsFlyerDestination` instance.
 
 ```dart
-import 'package:segment_analytics/client.dart';
-import 'package:segment_analytics_plugin_appsflyer/plugin_appsflyer.dart'
+import 'package:hightouch_events/client.dart';
+import 'package:hightouch_events_plugin_appsflyer/plugin_appsflyer.dart'
     show AppsFlyerDestination;
 
 const writeKey = 'SEGMENT_API_KEY';

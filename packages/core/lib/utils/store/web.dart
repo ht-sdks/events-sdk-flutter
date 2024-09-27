@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:segment_analytics/utils/store/store.dart';
+import 'package:hightouch_events/utils/store/store.dart';
 import 'package:web/web.dart' as web;
 
 class StoreImpl implements Store {

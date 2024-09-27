@@ -3,10 +3,10 @@ library analytics_plugin_adjust;
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_config.dart';
 import 'package:adjust_sdk/adjust_event.dart';
-import 'package:segment_analytics/errors.dart';
-import 'package:segment_analytics/plugin.dart';
-import 'package:segment_analytics_plugin_adjust/types.dart';
-import 'package:segment_analytics_plugin_adjust/utils.dart';
+import 'package:hightouch_events/errors.dart';
+import 'package:hightouch_events/plugin.dart';
+import 'package:hightouch_events_plugin_adjust/types.dart';
+import 'package:hightouch_events_plugin_adjust/utils.dart';
 
 class AdjustDestination extends DestinationPlugin {
   AdjustDestination() : super("Adjust");
@@ -109,8 +109,7 @@ class AdjustDestination extends DestinationPlugin {
         }
 
         final revenue = extract<double>('revenue', properties);
-        final currency =
-            extract<String>('currency', properties, defaultValue: 'USD');
+        final currency = extract<String>('currency', properties, defaultValue: 'USD');
         final orderId = extract<String>('orderId', properties);
 
         if (revenue != null && currency != null) {

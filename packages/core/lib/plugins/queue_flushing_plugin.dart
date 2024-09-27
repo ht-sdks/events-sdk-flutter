@@ -1,7 +1,7 @@
-import 'package:segment_analytics/analytics.dart';
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/plugin.dart';
-import 'package:segment_analytics/state.dart';
+import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/plugin.dart';
+import 'package:hightouch_events/state.dart';
 
 typedef OnFlush = Future Function(List<RawEvent> events);
 
@@ -19,8 +19,7 @@ class QueueFlushingPlugin extends UtilityPlugin {
   configure(Analytics analytics) {
     super.configure(analytics);
 
-    _state = QueueState("queue_flushing_plugin", analytics.store,
-        (json) => eventFromJson(json));
+    _state = QueueState("queue_flushing_plugin", analytics.store, (json) => eventFromJson(json));
 
     _state!.init(analytics.error, true);
   }

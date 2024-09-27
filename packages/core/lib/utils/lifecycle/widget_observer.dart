@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:segment_analytics/utils/lifecycle/lifecycle.dart';
+import 'package:hightouch_events/utils/lifecycle/lifecycle.dart';
 import 'package:flutter/widgets.dart';
 
 class WidgetObserverLifecycle extends LifeCycle with WidgetsBindingObserver {
@@ -20,9 +20,7 @@ class WidgetObserverLifecycle extends LifeCycle with WidgetsBindingObserver {
   StreamSubscription<AppStatus> listen(void Function(AppStatus event)? onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     return _streamController.stream
-        .map((event) => (event == AppLifecycleState.resumed)
-            ? AppStatus.foreground
-            : AppStatus.background)
+        .map((event) => (event == AppLifecycleState.resumed) ? AppStatus.foreground : AppStatus.background)
         .listen(onData, onDone: onDone, onError: onError);
   }
 }

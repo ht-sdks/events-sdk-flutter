@@ -1,20 +1,20 @@
-import 'package:segment_analytics/analytics.dart';
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/plugin.dart';
-import 'package:segment_analytics/plugins/destination_metadata_enrichment.dart';
-import 'package:segment_analytics/plugins/queue_flushing_plugin.dart';
-import 'package:segment_analytics/logger.dart';
-import 'package:segment_analytics/utils/chunk.dart';
+import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/plugin.dart';
+import 'package:hightouch_events/plugins/destination_metadata_enrichment.dart';
+import 'package:hightouch_events/plugins/queue_flushing_plugin.dart';
+import 'package:hightouch_events/logger.dart';
+import 'package:hightouch_events/utils/chunk.dart';
 
 const maxEventsPerBatch = 100;
 const maxPayloadSizeInKb = 500;
-const segmentDestinationKey = 'Segment.io';
+const hightouchDestinationKey = 'Hightouch.io';
 
-class SegmentDestination extends DestinationPlugin with Flushable {
+class HightouchDestination extends DestinationPlugin with Flushable {
   late final QueueFlushingPlugin _queuePlugin;
   String? _apiHost;
 
-  SegmentDestination() : super(segmentDestinationKey) {
+  HightouchDestination() : super(hightouchDestinationKey) {
     _queuePlugin = QueueFlushingPlugin(_sendEvents);
   }
 
@@ -23,8 +23,8 @@ class SegmentDestination extends DestinationPlugin with Flushable {
       return;
     }
 
-    final List<List<RawEvent>> chunkedEvents = chunk(events,
-        analytics?.state.configuration.state.maxBatchSize ?? maxEventsPerBatch,
+    final List<List<RawEvent>> chunkedEvents = chunk(
+        events, analytics?.state.configuration.state.maxBatchSize ?? maxEventsPerBatch,
         maxKB: maxPayloadSizeInKb);
 
     final List<RawEvent> sentEvents = [];
@@ -32,9 +32,8 @@ class SegmentDestination extends DestinationPlugin with Flushable {
 
     await Future.forEach(chunkedEvents, (batch) async {
       try {
-        final succeeded = await analytics?.httpClient.startBatchUpload(
-            analytics!.state.configuration.state.writeKey, batch,
-            host: _apiHost);
+        final succeeded = await analytics?.httpClient
+            .startBatchUpload(analytics!.state.configuration.state.writeKey, batch, host: _apiHost);
         if (succeeded == null || !succeeded) {
           numFailedEvents += batch.length;
         }
@@ -62,14 +61,14 @@ class SegmentDestination extends DestinationPlugin with Flushable {
     super.configure(analytics);
 
     // Enrich events with the Destination metadata
-    add(DestinationMetadataEnrichment(segmentDestinationKey));
+    add(DestinationMetadataEnrichment(hightouchDestinationKey));
     add(_queuePlugin);
   }
 
   @override
   void update(Map<String, dynamic> settings, ContextUpdateType type) {
     super.update(settings, type);
-    _apiHost = settings[segmentDestinationKey]?['apiHost'];
+    _apiHost = settings[hightouchDestinationKey]?['apiHost'];
   }
 
   @override

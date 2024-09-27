@@ -1,12 +1,11 @@
-import 'package:segment_analytics/analytics_platform_interface.dart';
+import 'package:hightouch_events/analytics_platform_interface.dart';
 import 'package:flutter/services.dart';
 
 import 'native_context.dart';
 
 /// An implementation of [AnalyticsPlatform] that uses Pigeon.
 class AnalyticsPlatformImpl extends AnalyticsPlatform {
-  static const EventChannel _eChannel =
-      EventChannel('analytics/deep_link_events');
+  static const EventChannel _eChannel = EventChannel('analytics/deep_link_events');
   final NativeContextApi _api = NativeContextApi();
 
   @override

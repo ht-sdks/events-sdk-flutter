@@ -1,4 +1,4 @@
-package com.segment.analytics
+package com.hightouch.events
 
 import NativeContext
 import NativeContextApi

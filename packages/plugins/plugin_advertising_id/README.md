@@ -23,11 +23,11 @@ See [Google Play Services documentation](https://developers.google.com/admob/and
 
 Follow the [instructions for adding plugins](https://github.com/segmentio/analytics_flutter_#adding-plugins) on the main Analytics client:
 
-In your code where you initialize the analytics client call the `.add(plugin)` method with an `AdvertisingIdDestination` instance. 
+In your code where you initialize the analytics client call the `.add(plugin)` method with an `AdvertisingIdDestination` instance.
 
 ```dart
-import 'package:segment_analytics/client.dart';
-import 'package:segment_analytics_plugin_advertising_id/plugin_advertising_id.dart'
+import 'package:hightouch_events/client.dart';
+import 'package:hightouch_events_plugin_advertising_id/plugin_advertising_id.dart'
     show PluginAdvertisingId;
 
 const writeKey = 'SEGMENT_API_KEY';

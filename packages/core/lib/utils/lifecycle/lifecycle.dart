@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:segment_analytics/utils/lifecycle/fgbg.dart';
-import 'package:segment_analytics/utils/lifecycle/widget_observer.dart';
+import 'package:hightouch_events/utils/lifecycle/fgbg.dart';
+import 'package:hightouch_events/utils/lifecycle/widget_observer.dart';
 import 'package:flutter/foundation.dart';
 
 enum AppStatus { foreground, background }

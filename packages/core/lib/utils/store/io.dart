@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:segment_analytics/errors.dart';
-import 'package:segment_analytics/utils/store/store.dart';
+import 'package:hightouch_events/errors.dart';
+import 'package:hightouch_events/utils/store/store.dart';
 import 'package:path_provider/path_provider.dart';
 
 class StoreImpl with Store {
@@ -22,8 +22,7 @@ class StoreImpl with Store {
   }
 
   Future _writeFile(String fileKey, Map<String, dynamic> data) async {
-    RandomAccessFile file =
-        await _getFile(fileKey, create: true) as RandomAccessFile;
+    RandomAccessFile file = await _getFile(fileKey, create: true) as RandomAccessFile;
     final serialized = json.encode(data);
     final buffer = utf8.encode(serialized);
 
@@ -60,8 +59,7 @@ class StoreImpl with Store {
     return "$path/analytics-flutter-$fileKey.json";
   }
 
-  Future<RandomAccessFile?> _getFile(String fileKey,
-      {bool create = false}) async {
+  Future<RandomAccessFile?> _getFile(String fileKey, {bool create = false}) async {
     final file = File(await _fileName(fileKey));
 
     if (await file.exists()) {

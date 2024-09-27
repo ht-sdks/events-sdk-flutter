@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:segment_analytics/analytics_platform_interface.dart';
-import 'package:segment_analytics/logger.dart';
-import 'package:segment_analytics/native_context.dart';
-import 'package:segment_analytics/utils/http_client.dart';
-import 'package:segment_analytics/utils/store/store.dart';
+import 'package:hightouch_events/analytics_platform_interface.dart';
+import 'package:hightouch_events/logger.dart';
+import 'package:hightouch_events/native_context.dart';
+import 'package:hightouch_events/utils/http_client.dart';
+import 'package:hightouch_events/utils/store/store.dart';
 import 'package:http/http.dart';
 import 'package:mockito/annotations.dart';
 
@@ -33,8 +33,7 @@ class MockPlatform extends AnalyticsPlatform {
 class Mocks {
   static MockLogTarget logTarget() => MockLogTarget();
   static MockRequest request() => MockRequest();
-  static MockStreamSubscription<T> streamSubscription<T>() =>
-      MockStreamSubscription<T>();
+  static MockStreamSubscription<T> streamSubscription<T>() => MockStreamSubscription<T>();
   static MockHTTPClient httpClient() => MockHTTPClient();
   static MockStore store() => MockStore();
 }

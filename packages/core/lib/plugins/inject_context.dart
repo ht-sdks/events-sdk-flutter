@@ -1,6 +1,6 @@
-import 'package:segment_analytics/analytics.dart';
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/plugin.dart';
+import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/plugin.dart';
 import 'package:uuid/uuid.dart';
 
 class InjectContext extends PlatformPlugin {

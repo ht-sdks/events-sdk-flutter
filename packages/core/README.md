@@ -1,9 +1,6 @@
-# segment_analytics
+# events-sdk-flutter
 
-> **Warning**
-> This project is currently only available in Beta phase and is covered by Segment's First Access & Beta Preview Terms. We encourage you to try out this new library. Please provide feedback via Github issues/PRs, and feel free to submit pull requests.
-
-The hassle-free way to add Segment analytics to your Flutter[^1] app.
+The hassle-free way to add Hightouch Events to your Flutter[^1] app.
 
 Supports the following platforms:
 
@@ -16,10 +13,9 @@ Some destination plugins might not support all platform functionality. Refer to 
 
 ## Table of Contents
 
-- [segment_analytics](#segment_analytics)
+- [events-sdk-flutter](#events-sdk-flutter)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
-    - [Upgrading from Pilot](#upgrading-from-pilot)
     - [Permissions](#permissions)
   - [Usage](#usage)
     - [Setting up the client](#setting-up-the-client)
@@ -55,32 +51,10 @@ Some destination plugins might not support all platform functionality. Refer to 
 
 Run:
 
-`flutter pub add segment_analytics`
+`flutter pub add hightouch_events`
 
 ```dart
-import 'package:segment_analytics/client.dart';
-```
-
-### Upgrading from Pilot
-
-Since pilot phase we have renamed the package of this library from `analytics` to `segment_analytics`. Some changes have to be applied after upgrading to the v1 package:
-
-In your `pubspec.yaml` remove the `analytics` package and use `segment_analytics` instead.
-
-```diff
--   analytics:
--     git:
--       url: https://github.com/segmentio/analytics_flutter
--       ref: main
--       path: packages/core
-+   segment_analytics: ^1.0.1
-```
-
-In your dart files change the imports from `package:segment_analytics` to `package:segment_analytics`:
-
-```diff
-- import 'package:segment_analytics/client.dart';
-+ import 'package:segment_analytics/client.dart';
+import 'package:hightouch_events/client.dart';
 ```
 
 ### Permissions
@@ -112,7 +86,7 @@ You must pass at least the `writeKey`. Additional configuration options are list
 ### Client Options
 
 | Name                              | Default                       | Description                                                                                                                                                                                                                                                                     |
-| --------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 
+| --------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `writeKey` **(REQUIRED)**         | ''                            | Your Segment API key.                                                                                                                                                                                                                                                           |
 | `debug`                           | false                         | When set to false, it will not generate any info logs.                                                                                                                                                                                                                          |
 | `collectDeviceId`                 | false                         | Set to true to automatically collect the device ID from the DRM API on Android devices.                                                                                                                                                                                         |
@@ -320,12 +294,12 @@ Or if you prefer, you can pass `autoAddSegmentDestination = false` in the option
 You can add a plugin at any time through the `add()` method.
 
 ```dart
-import 'package:segment_analytics/client.dart';
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/state.dart';
-import 'package:segment_analytics_plugin_advertising_id/plugin_advertising_id.dart';
-import 'package:segment_analytics_plugin_idfa/plugin_idfa.dart';
-import 'package:segment_analytics_plugin_firebase/plugin_firebase.dart'
+import 'package:hightouch_events/client.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/state.dart';
+import 'package:hightouch_events_plugin_advertising_id/plugin_advertising_id.dart';
+import 'package:hightouch_events_plugin_idfa/plugin_idfa.dart';
+import 'package:hightouch_events_plugin_firebase/plugin_firebase.dart'
     show FirebaseDestination;
 
 const writeKey = 'SEGMENT_API_KEY';
@@ -363,10 +337,10 @@ You can them customise the functionality by overriding different methods on the 
 ```dart
 import 'dart:convert';
 
-import 'package:segment_analytics/analytics.dart';
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/plugin.dart';
-import 'package:segment_analytics/logger.dart';
+import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/plugin.dart';
+import 'package:hightouch_events/logger.dart';
 
 class EventLogger extends DestinationPlugin {
   var logKind = LogFilterKind.debug;
@@ -410,8 +384,8 @@ A Flush Policy defines the strategy for deciding when to flush, this can be on a
 To make use of flush policies you can set them in the configuration of the client:
 
 ```dart
-import 'package:segment_analytics/flush_policies/count_flush_policy.dart';
-import 'package:segment_analytics/flush_policies/timer_flush_policy.dart';
+import 'package:hightouch_events/flush_policies/count_flush_policy.dart';
+import 'package:hightouch_events/flush_policies/timer_flush_policy.dart';
 
 final analytics = createClient(Configuration(/*...*/, flushPolicies: [
   CountFlushPolicy(10),
@@ -459,8 +433,8 @@ and optionally can implement:
 They also have a `shouldFlush` boolean value. When this is set to true the client will atempt to upload events. Each policy should reset this value to `false` according to its own logic, although it is pretty common to do it inside the `reset` method.
 
 ```dart
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/flush_policies/flush_policy.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/flush_policies/flush_policy.dart';
 
 class FlushOnScreenEventsPolicy extends FlushPolicy {
 
@@ -486,7 +460,7 @@ class FlushOnScreenEventsPolicy extends FlushPolicy {
 By default any logging is done via the standard Flutter logging mechanism. To customise logging, you can build your own logger, which must implement the `LogTarget` mixin. For example:
 
 ```dart
-import 'package:segment_analytics/logger.dart';
+import 'package:hightouch_events/logger.dart';
 
 void customDebugLog(String msg) {
   // ...
@@ -530,7 +504,7 @@ The error handler configuration receives a function which will get called whenev
 You can use this error handling to trigger different behaviours in the client when a problem occurs. For example if the client gets rate limited you could use the error handler to swap flush policies to be less aggressive:
 
 ```dart
-import 'package:segment_analytics/errors.dart';
+import 'package:hightouch_events/errors.dart';
 
 //...
 
@@ -558,7 +532,7 @@ final analytics = createClient(Configuration(writeKey),
 Plugins can also report errors to the handler by using the [`.error`](./lib/analytics.dart#L55) function of the analytics client, we recommend using the `PluginError` for consistency, and attaching the `innerError` with the actual exception that was hit:
 
 ```dart
-import 'package:segment_analytics/errors.dart';
+import 'package:hightouch_events/errors.dart';
 
 //...
 

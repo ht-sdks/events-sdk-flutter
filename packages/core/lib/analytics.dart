@@ -2,32 +2,32 @@ library analytics;
 
 import 'dart:async';
 
-import 'package:segment_analytics/client.dart';
-import 'package:segment_analytics/errors.dart';
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/flush_policies/flush_policy.dart';
-import 'package:segment_analytics/flush_policies/flush_policy_executor.dart';
-import 'package:segment_analytics/logger.dart';
-import 'package:segment_analytics/native_context.dart';
-import 'package:segment_analytics/plugin.dart';
-import 'package:segment_analytics/plugins/segment_destination.dart';
-import 'package:segment_analytics/state.dart';
-import 'package:segment_analytics/timeline.dart';
-import 'package:segment_analytics/utils/lifecycle/lifecycle.dart';
-import 'package:segment_analytics/utils/store/store.dart';
+import 'package:hightouch_events/client.dart';
+import 'package:hightouch_events/errors.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/flush_policies/flush_policy.dart';
+import 'package:hightouch_events/flush_policies/flush_policy_executor.dart';
+import 'package:hightouch_events/logger.dart';
+import 'package:hightouch_events/native_context.dart';
+import 'package:hightouch_events/plugin.dart';
+import 'package:hightouch_events/plugins/hightouch_destination.dart';
+import 'package:hightouch_events/state.dart';
+import 'package:hightouch_events/timeline.dart';
+import 'package:hightouch_events/utils/lifecycle/lifecycle.dart';
+import 'package:hightouch_events/utils/store/store.dart';
 import 'package:flutter/foundation.dart';
 import 'package:state_notifier/state_notifier.dart';
 import 'package:uuid/uuid.dart';
 import 'analytics_platform_interface.dart';
-import 'package:segment_analytics/version.dart';
-import 'package:segment_analytics/utils/http_client.dart';
-import 'package:segment_analytics/plugins/inject_user_info.dart';
-import 'package:segment_analytics/plugins/inject_context.dart';
-import 'package:segment_analytics/plugins/inject_token.dart';
+import 'package:hightouch_events/version.dart';
+import 'package:hightouch_events/utils/http_client.dart';
+import 'package:hightouch_events/plugins/inject_user_info.dart';
+import 'package:hightouch_events/plugins/inject_context.dart';
+import 'package:hightouch_events/plugins/inject_token.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Analytics with ClientMethods {
-  static String version() => segmentVersion;
+  static String version() => hightouchVersion;
   static bool debug = false;
 
   StateManager get state => _state;
@@ -56,8 +56,7 @@ class Analytics with ClientMethods {
     reportInternalError(exception, analytics: this);
   }
 
-  Analytics(Configuration config, this._store,
-      {HTTPClient Function(Analytics)? httpClient})
+  Analytics(Configuration config, this._store, {HTTPClient Function(Analytics)? httpClient})
       : _state = StateManager(_store, System(true, false), config),
         _timeline = Timeline() {
     _state.init(error, config.storageJson!);
@@ -67,11 +66,11 @@ class Analytics with ClientMethods {
     state.ready.then((_) => _onStateReady());
 
     if (config.autoAddSegmentDestination) {
-      final segmentDestination = SegmentDestination();
-      addPlugin(segmentDestination);
+      final hightouchDestination = HightouchDestination();
+      addPlugin(hightouchDestination);
     }
 
-    if(config.token != null) {
+    if (config.token != null) {
       _platformPlugins.add(InjectToken(config.token!));
     }
 
@@ -113,14 +112,12 @@ class Analytics with ClientMethods {
   ///
   /// @param callback Function to call when context is ready.
   void Function() onContextLoaded(void Function(ContextUpdateType) callback) =>
-      _onContextLoaded
-          .addListener((context) => context != null ? callback(context) : null);
+      _onContextLoaded.addListener((context) => context != null ? callback(context) : null);
 
   /// Registers a callback for each plugin that gets added to the analytics client.
   /// @param callback Function to call
   void Function() onPluginLoaded(void Function(Plugin) callback) =>
-      _onPluginLoaded
-          .addListener((plugin) => plugin != null ? callback(plugin) : null);
+      _onPluginLoaded.addListener((plugin) => plugin != null ? callback(plugin) : null);
 
   List<Plugin> getPlugins(PluginType? ofType) {
     return _timeline.getPlugins(ofType);
@@ -133,8 +130,7 @@ class Analytics with ClientMethods {
     // can be cached and added later during the next state update
     // this is to avoid adding plugins before network requests made as part of setup have resolved
     if (settings != null && plugin.type == PluginType.destination) {
-      state.integrations
-          .addIntegration((plugin as DestinationPlugin).key, settings);
+      state.integrations.addIntegration((plugin as DestinationPlugin).key, settings);
     }
 
     if (!state.isReady) {
@@ -181,9 +177,8 @@ class Analytics with ClientMethods {
 
   @override
   Future reset({bool? resetAnonymousId = true}) async {
-    final anonymousId = resetAnonymousId == true
-        ? const Uuid().v4()
-        : (await state.userInfo.state).anonymousId;
+    final anonymousId =
+        resetAnonymousId == true ? const Uuid().v4() : (await state.userInfo.state).anonymousId;
 
     state.userInfo.setState(UserInfo(anonymousId));
 
@@ -200,8 +195,7 @@ class Analytics with ClientMethods {
 
     _flushPolicyExecuter.reset();
 
-    await Future.wait(
-        getPluginsWithFlush(_timeline).map((plugin) => plugin.flush()));
+    await Future.wait(getPluginsWithFlush(_timeline).map((plugin) => plugin.flush()));
   }
 
   void _trackDeepLinkEvent(DeepLinkData deepLinkProperties) {
@@ -239,8 +233,7 @@ class Analytics with ClientMethods {
   @override
   Future alias(String newUserId) async {
     final userInfo = await state.userInfo.state;
-    final event =
-        AliasEvent(userInfo.userId ?? userInfo.anonymousId, userId: newUserId);
+    final event = AliasEvent(userInfo.userId ?? userInfo.anonymousId, userId: newUserId);
 
     await _process(event);
   }
@@ -298,20 +291,17 @@ class Analytics with ClientMethods {
   }
 
   Future _checkInstalledVersion() async {
-    final contextFuture = AnalyticsPlatform.instance
-        .getContext(collectDeviceId: state.configuration.state.collectDeviceId);
+    final contextFuture =
+        AnalyticsPlatform.instance.getContext(collectDeviceId: state.configuration.state.collectDeviceId);
     final previousContextFuture = state.context.state;
     final userInfo = state.userInfo.state;
 
-    final contexts =
-        await Future.wait([contextFuture, previousContextFuture, userInfo]);
-    final context = Context.fromNative(contexts[0] as NativeContext,
-        (contexts[2] as UserInfo).userTraits ?? UserTraits());
+    final contexts = await Future.wait([contextFuture, previousContextFuture, userInfo]);
+    final context = Context.fromNative(
+        contexts[0] as NativeContext, (contexts[2] as UserInfo).userTraits ?? UserTraits());
     final previousContext = contexts[1] as Context?;
 
-    state.context.setState(previousContext == null
-        ? context
-        : mergeContext(context, previousContext));
+    state.context.setState(previousContext == null ? context : mergeContext(context, previousContext));
 
     // Only callback during the intial context load
     if (previousContext == null) {
@@ -327,7 +317,7 @@ class Analytics with ClientMethods {
     // Set a flag on the first launch to track installations/updates
     // We ignore this on web
     if (!kIsWeb) {
-      const appInstalledFlag = "segment_app_installed";
+      const appInstalledFlag = "hightouch_app_installed";
       final prefs = await SharedPreferences.getInstance();
       final isAppInstalled = prefs.getBool(appInstalledFlag);
 
@@ -355,14 +345,12 @@ class Analytics with ClientMethods {
   }
 
   Future _fetchSettings() async {
-    final settings =
-        await httpClient.settingsFor(state.configuration.state.writeKey);
+    final settings = await httpClient.settingsFor(state.configuration.state.writeKey);
     if (settings == null) {
       log("""Could not receive settings from Segment. ${state.configuration.state.defaultIntegrationSettings != null ? 'Will use the default settings.' : 'Device mode destinations will be ignored unless you specify default settings in the client config.'}""",
           kind: LogFilterKind.warning);
 
-      state.integrations.state =
-          state.configuration.state.defaultIntegrationSettings ?? {};
+      state.integrations.state = state.configuration.state.defaultIntegrationSettings ?? {};
     } else {
       final integrations = settings.integrations;
       log("Received settings from Segment succesfully.");
@@ -404,20 +392,14 @@ class Analytics with ClientMethods {
     _appState = nextAppState;
 
     if (state.configuration.state.trackApplicationLifecycleEvents) {
-      if ((priorAppState == AppStatus.background) &&
-          nextAppState == AppStatus.foreground) {
+      if ((priorAppState == AppStatus.background) && nextAppState == AppStatus.foreground) {
         final context = await state.context.state;
         track("Application Opened",
             properties: priorAppState == AppStatus.background
                 ? {}
-                : {
-                    "from_background": true,
-                    "version": context?.app.version,
-                    "build": context?.app.build
-                  });
+                : {"from_background": true, "version": context?.app.version, "build": context?.app.build});
         await _fetchSettings();
-      } else if ((priorAppState == null ||
-              priorAppState == AppStatus.foreground) &&
+      } else if ((priorAppState == null || priorAppState == AppStatus.foreground) &&
           nextAppState == AppStatus.background) {
         track("Application Backgrounded");
       }

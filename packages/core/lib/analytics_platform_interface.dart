@@ -1,6 +1,6 @@
-import 'package:segment_analytics/analytics_web.dart'
-    if (dart.library.io) 'package:segment_analytics/analytics_pigeon.dart';
-import 'package:segment_analytics/native_context.dart';
+import 'package:hightouch_events/analytics_web.dart'
+    if (dart.library.io) 'package:hightouch_events/analytics_pigeon.dart';
+import 'package:hightouch_events/native_context.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 abstract class AnalyticsPlatform extends PlatformInterface {
@@ -30,6 +30,6 @@ abstract class AnalyticsPlatform extends PlatformInterface {
   /// A broadcast stream for receiving incoming link change events.
   ///
   /// The [Stream] emits opened links as [String]s.
-  Stream<Map<String, dynamic>> get linkStream => throw UnimplementedError(
-      'getLinksStream has not been implemented on the current platform.');
+  Stream<Map<String, dynamic>> get linkStream =>
+      throw UnimplementedError('getLinksStream has not been implemented on the current platform.');
 }

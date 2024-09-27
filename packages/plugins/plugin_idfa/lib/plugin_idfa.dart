@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:segment_analytics/plugin.dart';
-import 'package:segment_analytics_plugin_idfa/native_idfa.dart';
+import 'package:hightouch_events/plugin.dart';
+import 'package:hightouch_events_plugin_idfa/native_idfa.dart';
 
 import 'plugin_idfa_platform_interface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -36,8 +36,7 @@ class PluginIdfa extends Plugin {
   }
 
   Future<IdfaData> getTrackingStatus() async {
-    final NativeIdfaData idfaData =
-        await PluginIdfaPlatform.instance.getTrackingAuthorizationStatus();
+    final NativeIdfaData idfaData = await PluginIdfaPlatform.instance.getTrackingAuthorizationStatus();
 
     final context = await analytics?.state.context.state;
 
@@ -50,7 +49,6 @@ class PluginIdfa extends Plugin {
       analytics?.state.context.setState(context);
     }
 
-    return IdfaData(idfaData.adTrackingEnabled ?? false, idfaData.advertisingId,
-        idfaData.trackingStatus);
+    return IdfaData(idfaData.adTrackingEnabled ?? false, idfaData.advertisingId, idfaData.trackingStatus);
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:segment_analytics/utils/lifecycle/lifecycle.dart';
+import 'package:hightouch_events/utils/lifecycle/lifecycle.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 
 class FGBGLifecycle extends LifeCycle {
@@ -10,9 +10,7 @@ class FGBGLifecycle extends LifeCycle {
   StreamSubscription<AppStatus> listen(void Function(AppStatus event)? onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     return _stream
-        .map((event) => (event == FGBGType.foreground)
-            ? AppStatus.foreground
-            : AppStatus.background)
+        .map((event) => (event == FGBGType.foreground) ? AppStatus.foreground : AppStatus.background)
         .listen(onData, onDone: onDone, onError: onError);
   }
 }

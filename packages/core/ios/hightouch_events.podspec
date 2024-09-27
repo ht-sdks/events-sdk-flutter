@@ -1,17 +1,17 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint segment_analytics.podspec` to validate before publishing.
+# Run `pod lib lint hightouch_events.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'segment_analytics'
+  s.name             = 'hightouch_events'
   s.version          = '0.0.1'
-  s.summary          = 'The hassle-free way to add Segment analytics to your Flutter app.'
+  s.summary          = 'The hassle-free way to add Hightouch Events to your Flutter app.'
   s.description      = <<-DESC
-The hassle-free way to add Segment analytics to your Flutter app.
+The hassle-free way to add Hightouch Events to your Flutter app.
                        DESC
-  s.homepage         = 'http://segment.com'
+  s.homepage         = 'https://hightouch.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Segment' => 'support@segment.com' }
+  s.author           = { 'Hightouch' => 'support@hightouch.io' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'

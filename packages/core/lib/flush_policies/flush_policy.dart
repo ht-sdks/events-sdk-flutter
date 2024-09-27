@@ -1,4 +1,4 @@
-import 'package:segment_analytics/event.dart';
+import 'package:hightouch_events/event.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 abstract class FlushPolicy extends StateNotifier<bool> {

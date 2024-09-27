@@ -1,5 +1,5 @@
-import 'package:segment_analytics/errors.dart';
-import 'package:segment_analytics/native_context.dart';
+import 'package:hightouch_events/errors.dart';
+import 'package:hightouch_events/native_context.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 part 'event.g.dart';
@@ -64,13 +64,9 @@ class DestinationMetadata {
   List<String> unbundled;
   List<String> bundledIds;
 
-  DestinationMetadata(
-      {this.bundled = const [],
-      this.bundledIds = const [],
-      this.unbundled = const []});
+  DestinationMetadata({this.bundled = const [], this.bundledIds = const [], this.unbundled = const []});
 
-  factory DestinationMetadata.fromJson(Map<String, dynamic> json) =>
-      _$DestinationMetadataFromJson(json);
+  factory DestinationMetadata.fromJson(Map<String, dynamic> json) => _$DestinationMetadataFromJson(json);
   Map<String, dynamic> toJson() => _$DestinationMetadataToJson(this);
 }
 
@@ -81,8 +77,7 @@ class TrackEvent extends RawEvent {
 
   TrackEvent(this.event, {this.properties}) : super(EventType.track);
 
-  factory TrackEvent.fromJson(Map<String, dynamic> json) =>
-      _$TrackEventFromJson(json);
+  factory TrackEvent.fromJson(Map<String, dynamic> json) => _$TrackEventFromJson(json);
   @override
   Map<String, dynamic> toJson() => eventToJson(_$TrackEventToJson(this), this);
 }
@@ -90,14 +85,11 @@ class TrackEvent extends RawEvent {
 @JsonSerializable(explicitToJson: true)
 class IdentifyEvent extends RawEvent {
   UserTraits? traits;
-  IdentifyEvent({this.traits, String? userId})
-      : super(EventType.identify, userId: userId);
+  IdentifyEvent({this.traits, String? userId}) : super(EventType.identify, userId: userId);
 
-  factory IdentifyEvent.fromJson(Map<String, dynamic> json) =>
-      _$IdentifyEventFromJson(json);
+  factory IdentifyEvent.fromJson(Map<String, dynamic> json) => _$IdentifyEventFromJson(json);
   @override
-  Map<String, dynamic> toJson() =>
-      eventToJson(_$IdentifyEventToJson(this), this);
+  Map<String, dynamic> toJson() => eventToJson(_$IdentifyEventToJson(this), this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -107,8 +99,7 @@ class GroupEvent extends RawEvent {
 
   GroupEvent(this.groupId, {this.traits}) : super(EventType.group);
 
-  factory GroupEvent.fromJson(Map<String, dynamic> json) =>
-      _$GroupEventFromJson(json);
+  factory GroupEvent.fromJson(Map<String, dynamic> json) => _$GroupEventFromJson(json);
   @override
   Map<String, dynamic> toJson() => eventToJson(_$GroupEventToJson(this), this);
 }
@@ -117,11 +108,9 @@ class GroupEvent extends RawEvent {
 class AliasEvent extends RawEvent {
   String previousId;
 
-  AliasEvent(this.previousId, {String? userId})
-      : super(EventType.alias, userId: userId);
+  AliasEvent(this.previousId, {String? userId}) : super(EventType.alias, userId: userId);
 
-  factory AliasEvent.fromJson(Map<String, dynamic> json) =>
-      _$AliasEventFromJson(json);
+  factory AliasEvent.fromJson(Map<String, dynamic> json) => _$AliasEventFromJson(json);
   @override
   Map<String, dynamic> toJson() => eventToJson(_$AliasEventToJson(this), this);
 }
@@ -133,14 +122,12 @@ class ScreenEvent extends RawEvent {
 
   ScreenEvent(this.name, {this.properties}) : super(EventType.screen);
 
-  factory ScreenEvent.fromJson(Map<String, dynamic> json) =>
-      _$ScreenEventFromJson(json);
+  factory ScreenEvent.fromJson(Map<String, dynamic> json) => _$ScreenEventFromJson(json);
   @override
   Map<String, dynamic> toJson() => eventToJson(_$ScreenEventToJson(this), this);
 }
 
-Map<String, dynamic> eventToJson<T extends RawEvent>(
-    Map<String, dynamic> json, T event) {
+Map<String, dynamic> eventToJson<T extends RawEvent>(Map<String, dynamic> json, T event) {
   json["type"] = event.type.toString();
   return json;
 }
@@ -186,8 +173,7 @@ class UserTraits extends JSONExtendableImpl {
       : super(custom: custom);
 
   factory UserTraits.fromJson(Map<String, dynamic> json) =>
-      JSONExtendable.fromJson(
-          json, _$UserTraitsFromJson, UserTraits._builtInKeys);
+      JSONExtendable.fromJson(json, _$UserTraitsFromJson, UserTraits._builtInKeys);
   Map<String, dynamic> toJson() => _toJson(_$UserTraitsToJson(this));
 
   static final Set<String> _builtInKeys = {
@@ -243,8 +229,7 @@ class GroupTraits extends JSONExtendableImpl {
       : super(custom: custom);
 
   factory GroupTraits.fromJson(Map<String, dynamic> json) =>
-      JSONExtendable.fromJson(
-          json, _$GroupTraitsFromJson, GroupTraits._builtInKeys);
+      JSONExtendable.fromJson(json, _$GroupTraitsFromJson, GroupTraits._builtInKeys);
   Map<String, dynamic> toJson() => _toJson(_$GroupTraitsToJson(this));
 
   static final Set<String> _builtInKeys = {
@@ -271,26 +256,14 @@ class Address extends JSONExtendableImpl {
   String? state;
   String? street;
 
-  Address(
-      {this.city,
-      this.country,
-      this.postalCode,
-      this.state,
-      this.street,
-      Map<String, dynamic>? custom})
+  Address({this.city, this.country, this.postalCode, this.state, this.street, Map<String, dynamic>? custom})
       : super(custom: custom);
 
   factory Address.fromJson(Map<String, dynamic> json) =>
       JSONExtendable.fromJson(json, _$AddressFromJson, Address._builtInKeys);
   Map<String, dynamic> toJson() => _toJson(_$AddressToJson(this));
 
-  static final Set<String> _builtInKeys = {
-    "city",
-    "country",
-    "postalCode",
-    "state",
-    "street"
-  };
+  static final Set<String> _builtInKeys = {"city", "country", "postalCode", "state", "street"};
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
@@ -301,26 +274,14 @@ class Company extends JSONExtendableImpl {
   int? employeeCount;
   String? plan;
 
-  Company(
-      {this.employeeCount,
-      this.id,
-      this.industry,
-      this.name,
-      this.plan,
-      Map<String, dynamic>? custom})
+  Company({this.employeeCount, this.id, this.industry, this.name, this.plan, Map<String, dynamic>? custom})
       : super(custom: custom);
 
   factory Company.fromJson(Map<String, dynamic> json) =>
       JSONExtendable.fromJson(json, _$CompanyFromJson, Company._builtInKeys);
   Map<String, dynamic> toJson() => _toJson(_$CompanyToJson(this));
 
-  static final Set<String> _builtInKeys = {
-    "name",
-    "id",
-    "industry",
-    "employeeCount",
-    "plan"
-  };
+  static final Set<String> _builtInKeys = {"name", "id", "industry", "employeeCount", "plan"};
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
@@ -336,8 +297,8 @@ class Context extends JSONExtendableImpl {
   String? instanceId;
   UserTraits traits;
 
-  Context(this.app, this.device, this.library, this.locale, this.network,
-      this.os, this.screen, this.timezone, this.traits,
+  Context(this.app, this.device, this.library, this.locale, this.network, this.os, this.screen, this.timezone,
+      this.traits,
       {this.instanceId, Map<String, dynamic>? custom})
       : super(custom: custom);
   Context.fromNative(NativeContext nativeContext, this.traits)
@@ -346,24 +307,20 @@ class Context extends JSONExtendableImpl {
             : ContextApp.fromNative(nativeContext.app as NativeContextApp),
         device = nativeContext.device == null
             ? ContextDevice("", "", "", "")
-            : ContextDevice.fromNative(
-                nativeContext.device as NativeContextDevice),
+            : ContextDevice.fromNative(nativeContext.device as NativeContextDevice),
         library = nativeContext.library == null
             ? ContextLibrary("", "")
-            : ContextLibrary.fromNative(
-                nativeContext.library as NativeContextLibrary),
+            : ContextLibrary.fromNative(nativeContext.library as NativeContextLibrary),
         locale = nativeContext.locale ?? "",
         network = nativeContext.network == null
             ? ContextNetwork(false, false)
-            : ContextNetwork.fromNative(
-                nativeContext.network as NativeContextNetwork),
+            : ContextNetwork.fromNative(nativeContext.network as NativeContextNetwork),
         os = nativeContext.os == null
             ? ContextOS("", "")
             : ContextOS.fromNative(nativeContext.os as NativeContextOS),
         screen = nativeContext.screen == null
             ? ContextScreen(0, 0)
-            : ContextScreen.fromNative(
-                nativeContext.screen as NativeContextScreen),
+            : ContextScreen.fromNative(nativeContext.screen as NativeContextScreen),
         timezone = nativeContext.timezone ?? "";
 
   factory Context.fromJson(Map<String, dynamic> json) =>
@@ -390,8 +347,7 @@ class ContextApp extends JSONExtendableImpl {
   String namespace;
   String version;
 
-  ContextApp(this.build, this.name, this.namespace, this.version,
-      {Map<String, dynamic>? custom})
+  ContextApp(this.build, this.name, this.namespace, this.version, {Map<String, dynamic>? custom})
       : super(custom: custom);
   ContextApp.fromNative(NativeContextApp nativeContextApp)
       : build = nativeContextApp.build ?? "",
@@ -400,16 +356,10 @@ class ContextApp extends JSONExtendableImpl {
         version = nativeContextApp.version ?? "";
 
   factory ContextApp.fromJson(Map<String, dynamic> json) =>
-      JSONExtendable.fromJson(
-          json, _$ContextAppFromJson, ContextApp._builtInKeys);
+      JSONExtendable.fromJson(json, _$ContextAppFromJson, ContextApp._builtInKeys);
   Map<String, dynamic> toJson() => _toJson(_$ContextAppToJson(this));
 
-  static final Set<String> _builtInKeys = {
-    "build",
-    "name",
-    "namespace",
-    "version"
-  };
+  static final Set<String> _builtInKeys = {"build", "name", "namespace", "version"};
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
@@ -445,8 +395,7 @@ class ContextDevice extends JSONExtendableImpl {
         token = nativeContextDevice.token;
 
   factory ContextDevice.fromJson(Map<String, dynamic> json) =>
-      JSONExtendable.fromJson(
-          json, _$ContextDeviceFromJson, ContextDevice._builtInKeys);
+      JSONExtendable.fromJson(json, _$ContextDeviceFromJson, ContextDevice._builtInKeys);
   Map<String, dynamic> toJson() => _toJson(_$ContextDeviceToJson(this));
 
   static final Set<String> _builtInKeys = {
@@ -467,15 +416,13 @@ class ContextLibrary extends JSONExtendableImpl {
   String name;
   String version;
 
-  ContextLibrary(this.name, this.version, {Map<String, dynamic>? custom})
-      : super(custom: custom);
+  ContextLibrary(this.name, this.version, {Map<String, dynamic>? custom}) : super(custom: custom);
   ContextLibrary.fromNative(NativeContextLibrary nativeContextLibrary)
       : name = nativeContextLibrary.name ?? "",
         version = nativeContextLibrary.version ?? "";
 
   factory ContextLibrary.fromJson(Map<String, dynamic> json) =>
-      JSONExtendable.fromJson(
-          json, _$ContextLibraryFromJson, ContextLibrary._builtInKeys);
+      JSONExtendable.fromJson(json, _$ContextLibraryFromJson, ContextLibrary._builtInKeys);
   Map<String, dynamic> toJson() => _toJson(_$ContextLibraryToJson(this));
 
   static final Set<String> _builtInKeys = {"name", "version"};
@@ -486,15 +433,13 @@ class ContextOS extends JSONExtendableImpl {
   String name;
   String version;
 
-  ContextOS(this.name, this.version, {Map<String, dynamic>? custom})
-      : super(custom: custom);
+  ContextOS(this.name, this.version, {Map<String, dynamic>? custom}) : super(custom: custom);
   ContextOS.fromNative(NativeContextOS nativeContextOS)
       : name = nativeContextOS.name ?? "",
         version = nativeContextOS.version ?? "";
 
   factory ContextOS.fromJson(Map<String, dynamic> json) =>
-      JSONExtendable.fromJson(
-          json, _$ContextOSFromJson, ContextOS._builtInKeys);
+      JSONExtendable.fromJson(json, _$ContextOSFromJson, ContextOS._builtInKeys);
   Map<String, dynamic> toJson() => _toJson(_$ContextOSToJson(this));
 
   static final Set<String> _builtInKeys = {"name", "version"};
@@ -505,15 +450,13 @@ class ContextNetwork extends JSONExtendableImpl {
   bool cellular;
   bool wifi;
 
-  ContextNetwork(this.cellular, this.wifi, {Map<String, dynamic>? custom})
-      : super(custom: custom);
+  ContextNetwork(this.cellular, this.wifi, {Map<String, dynamic>? custom}) : super(custom: custom);
   ContextNetwork.fromNative(NativeContextNetwork nativeContextNetwork)
       : cellular = nativeContextNetwork.cellular ?? false,
         wifi = nativeContextNetwork.wifi ?? false;
 
   factory ContextNetwork.fromJson(Map<String, dynamic> json) =>
-      JSONExtendable.fromJson(
-          json, _$ContextNetworkFromJson, ContextNetwork._builtInKeys);
+      JSONExtendable.fromJson(json, _$ContextNetworkFromJson, ContextNetwork._builtInKeys);
   Map<String, dynamic> toJson() => _toJson(_$ContextNetworkToJson(this));
 
   static final Set<String> _builtInKeys = {"cellular", "wifi"};
@@ -525,8 +468,7 @@ class ContextScreen extends JSONExtendableImpl {
   int width;
   double? density; // android only
 
-  ContextScreen(this.height, this.width,
-      {this.density, Map<String, dynamic>? custom})
+  ContextScreen(this.height, this.width, {this.density, Map<String, dynamic>? custom})
       : super(custom: custom);
   ContextScreen.fromNative(NativeContextScreen nativeContextScreen)
       : height = nativeContextScreen.height ?? 0,
@@ -534,8 +476,7 @@ class ContextScreen extends JSONExtendableImpl {
         density = nativeContextScreen.density;
 
   factory ContextScreen.fromJson(Map<String, dynamic> json) =>
-      JSONExtendable.fromJson(
-          json, _$ContextScreenFromJson, ContextScreen._builtInKeys);
+      JSONExtendable.fromJson(json, _$ContextScreenFromJson, ContextScreen._builtInKeys);
   Map<String, dynamic> toJson() => _toJson(_$ContextScreenToJson(this));
 
   static final Set<String> _builtInKeys = {"height", "width", "density"};
@@ -566,8 +507,8 @@ mixin JSONExtendable {
     return all;
   }
 
-  static T fromJson<T extends JSONExtendable>(Map<String, dynamic> json,
-      T Function(Map<String, dynamic>) innerFromJson, Set<String> builtInKeys) {
+  static T fromJson<T extends JSONExtendable>(
+      Map<String, dynamic> json, T Function(Map<String, dynamic>) innerFromJson, Set<String> builtInKeys) {
     if (json.containsKey("custom")) {
       json["custom"] = {"custom": json["custom"]};
     } else {
@@ -655,16 +596,8 @@ Address mergeAddress(Address a, Address b) {
 }
 
 Context mergeContext(Context a, Context b) {
-  return Context(
-      a.app,
-      mergeContextDevice(a.device, b.device),
-      a.library,
-      a.locale,
-      a.network,
-      a.os,
-      mergeContextScreen(a.screen, b.screen),
-      a.timezone,
-      a.traits,
+  return Context(a.app, mergeContextDevice(a.device, b.device), a.library, a.locale, a.network, a.os,
+      mergeContextScreen(a.screen, b.screen), a.timezone, a.traits,
       instanceId: a.instanceId ?? b.instanceId);
 }
 

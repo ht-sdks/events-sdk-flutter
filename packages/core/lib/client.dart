@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:segment_analytics/analytics.dart';
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/flush_policies/count_flush_policy.dart';
-import 'package:segment_analytics/flush_policies/flush_policy.dart';
-import 'package:segment_analytics/flush_policies/startup_flush_policy.dart';
-import 'package:segment_analytics/flush_policies/timer_flush_policy.dart';
-import 'package:segment_analytics/plugins/event_logger.dart';
-import 'package:segment_analytics/state.dart';
-import 'package:segment_analytics/utils/store/store.dart';
+import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/flush_policies/count_flush_policy.dart';
+import 'package:hightouch_events/flush_policies/flush_policy.dart';
+import 'package:hightouch_events/flush_policies/startup_flush_policy.dart';
+import 'package:hightouch_events/flush_policies/timer_flush_policy.dart';
+import 'package:hightouch_events/plugins/event_logger.dart';
+import 'package:hightouch_events/state.dart';
+import 'package:hightouch_events/utils/store/store.dart';
 import 'package:flutter/widgets.dart';
 
 Analytics createClient(Configuration configuration) {
@@ -50,8 +50,7 @@ List<FlushPolicy> defaultFlushPolicies = [
 ];
 
 class ScreenObserver extends NavigatorObserver {
-  final StreamController<String> screenStreamController =
-      StreamController.broadcast();
+  final StreamController<String> screenStreamController = StreamController.broadcast();
 
   Stream<String> get screenStream => screenStreamController.stream;
 

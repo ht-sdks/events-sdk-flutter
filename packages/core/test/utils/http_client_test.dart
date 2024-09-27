@@ -1,8 +1,8 @@
-import 'package:segment_analytics/analytics.dart';
-import 'package:segment_analytics/analytics_platform_interface.dart';
-import 'package:segment_analytics/logger.dart';
-import 'package:segment_analytics/state.dart';
-import 'package:segment_analytics/utils/http_client.dart';
+import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/analytics_platform_interface.dart';
+import 'package:hightouch_events/logger.dart';
+import 'package:hightouch_events/state.dart';
+import 'package:hightouch_events/utils/http_client.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -20,12 +20,10 @@ void main() {
     });
     test("It logs on bad response for get Settings", () async {
       final mockRequest = Mocks.request();
-      when(mockRequest.send()).thenAnswer(
-          (_) => Future.value(StreamedResponse(const Stream.empty(), 300)));
-      when(mockRequest.url).thenAnswer((_) => Uri.parse("http://segment.io"));
-      HTTPClient client = HTTPClient(Analytics(
-          Configuration("123", requestFactory: (_) => mockRequest),
-          Mocks.store()));
+      when(mockRequest.send()).thenAnswer((_) => Future.value(StreamedResponse(const Stream.empty(), 300)));
+      when(mockRequest.url).thenAnswer((_) => Uri.parse("http://hightouch-events.com"));
+      HTTPClient client =
+          HTTPClient(Analytics(Configuration("123", requestFactory: (_) => mockRequest), Mocks.store()));
 
       await client.settingsFor("123");
 
@@ -34,12 +32,10 @@ void main() {
     });
     test("It logs on bad response for send batch", () async {
       final mockRequest = Mocks.request();
-      when(mockRequest.send()).thenAnswer(
-          (_) => Future.value(StreamedResponse(const Stream.empty(), 300)));
-      when(mockRequest.url).thenAnswer((_) => Uri.parse("http://segment.io"));
-      HTTPClient client = HTTPClient(Analytics(
-          Configuration("123", requestFactory: (_) => mockRequest),
-          Mocks.store()));
+      when(mockRequest.send()).thenAnswer((_) => Future.value(StreamedResponse(const Stream.empty(), 300)));
+      when(mockRequest.url).thenAnswer((_) => Uri.parse("http://hightouch-events.com"));
+      HTTPClient client =
+          HTTPClient(Analytics(Configuration("123", requestFactory: (_) => mockRequest), Mocks.store()));
 
       await client.startBatchUpload("123", []);
 

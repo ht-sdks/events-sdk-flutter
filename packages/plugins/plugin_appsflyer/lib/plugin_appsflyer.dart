@@ -2,10 +2,10 @@ library analytics_plugin_appsflyer;
 
 import 'dart:convert';
 
-import 'package:segment_analytics/analytics.dart';
-import 'package:segment_analytics/plugin.dart';
-import 'package:segment_analytics_plugin_appsflyer/types.dart';
-import 'package:segment_analytics_plugin_appsflyer/utils.dart';
+import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/plugin.dart';
+import 'package:hightouch_events_plugin_appsflyer/types.dart';
+import 'package:hightouch_events_plugin_appsflyer/utils.dart';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 
 class AppsFlyerDestination extends DestinationPlugin {
@@ -36,14 +36,12 @@ class AppsFlyerDestination extends DestinationPlugin {
           timeToWaitForATTUserAuthorization: 50); // for iOS 14.5
       appsFlyer = AppsflyerSdk(appsFlyerOptions);
       appsFlyer!.initSdk(
-          registerConversionDataCallback:
-              appsFlyerSettings!.trackAttributionData,
+          registerConversionDataCallback: appsFlyerSettings!.trackAttributionData,
           registerOnDeepLinkingCallback: clientConfig.trackDeeplinks == true);
       hasInitialized = true;
     }
 
-    if (appsFlyerSettings!.trackAttributionData &&
-        !hasRegisteredInstallCallback) {
+    if (appsFlyerSettings!.trackAttributionData && !hasRegisteredInstallCallback) {
       registerConversionCallback();
       hasRegisteredInstallCallback = true;
     }
@@ -122,13 +120,11 @@ class AppsFlyerDestination extends DestinationPlugin {
         },
       };
 
-      if (res?.data["is_first_launch"] != null &&
-          jsonDecode(res?.data["is_first_launch"]) == true) {
+      if (res?.data["is_first_launch"] != null && jsonDecode(res?.data["is_first_launch"]) == true) {
         if (res?.data["af_status"] == 'Non-organic') {
           analytics?.track('Install Attributed', properties: properties);
         } else {
-          analytics
-              ?.track('Organic Install', properties: {"provider": "AppsFlyer"});
+          analytics?.track('Organic Install', properties: {"provider": "AppsFlyer"});
         }
       }
     });

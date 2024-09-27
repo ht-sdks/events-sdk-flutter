@@ -1,4 +1,4 @@
-import 'package:segment_analytics/analytics.dart';
+import 'package:hightouch_events/analytics.dart';
 import 'package:logger/logger.dart';
 
 /// The foundation for building out a special logger. If logs need to be directed to a certain area, this is the
@@ -86,8 +86,7 @@ class SystemLogger with LogTarget {
 class LogFactory {
   static LogTarget logger = SystemLogger();
 
-  static LogMessage buildLog(
-      LogDestination destination, String message, LogFilterKind kind) {
+  static LogMessage buildLog(LogDestination destination, String message, LogFilterKind kind) {
     switch (destination) {
       case LogDestination.log:
         return LogMessage(kind, message, LogDestination.log);
@@ -101,8 +100,7 @@ class LogFactory {
 
 void log(String message, {LogFilterKind? kind = LogFilterKind.debug}) {
   if (kind != LogFilterKind.debug || Analytics.debug) {
-    final log = LogFactory.buildLog(
-        LogDestination.log, message, kind ?? LogFilterKind.debug);
+    final log = LogFactory.buildLog(LogDestination.log, message, kind ?? LogFilterKind.debug);
     LogFactory.logger.parseLog(log);
   }
 }

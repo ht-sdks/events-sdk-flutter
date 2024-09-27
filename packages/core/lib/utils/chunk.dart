@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import 'package:segment_analytics/event.dart';
+import 'package:hightouch_events/event.dart';
 
-List<List<T>> chunk<T extends JSONSerialisable>(List<T> array, int count,
-    {int? maxKB}) {
+List<List<T>> chunk<T extends JSONSerialisable>(List<T> array, int count, {int? maxKB}) {
   if (array.isEmpty || count == 0) {
     return [];
   }

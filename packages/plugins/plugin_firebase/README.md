@@ -31,8 +31,8 @@ In your code where you initialize the analytics client call the `.add(plugin)` m
 
 ```dart
 import 'firebase_options.dart';
-import 'package:segment_analytics/client.dart';
-import 'package:segment_analytics_plugin_firebase/plugin_firebase.dart'
+import 'package:hightouch_events/client.dart';
+import 'package:hightouch_events_plugin_firebase/plugin_firebase.dart'
     show FirebaseDestination;
 
 const writeKey = 'SEGMENT_API_KEY';

@@ -1,5 +1,5 @@
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/flush_policies/flush_policy.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/flush_policies/flush_policy.dart';
 
 class CountFlushPolicy extends FlushPolicy {
   int _count = 0;

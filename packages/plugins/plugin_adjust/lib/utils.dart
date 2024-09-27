@@ -1,4 +1,4 @@
-import 'package:segment_analytics_plugin_adjust/types.dart';
+import 'package:hightouch_events_plugin_adjust/types.dart';
 
 String? mappedCustomEventToken(String eventName, AdjustSettings settings) {
   String? result;

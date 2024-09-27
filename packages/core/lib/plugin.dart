@@ -1,6 +1,6 @@
-import 'package:segment_analytics/analytics.dart';
-import 'package:segment_analytics/event.dart';
-import 'package:segment_analytics/timeline.dart';
+import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/event.dart';
+import 'package:hightouch_events/timeline.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class Plugin {
@@ -154,8 +154,7 @@ abstract class DestinationPlugin extends EventPlugin {
       return null;
     }
 
-    final enrichmentResult =
-        await timeline.applyPlugins(PluginType.enrichment, event);
+    final enrichmentResult = await timeline.applyPlugins(PluginType.enrichment, event);
     if (enrichmentResult == null) {
       return null;
     }
