@@ -1,4 +1,4 @@
-library analytics_plugin_adjust;
+library hightouch_events_plugin_adjust;
 
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_config.dart';

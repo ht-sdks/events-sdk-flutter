@@ -8,7 +8,7 @@ Manually add this package to your `pubspec.yaml` file.
 
 ```yaml
 dependencies:
-  analytics_plugin_appsflyer:
+  hightouch_events_plugin_appsflyer:
     git:
       url: https://github.com/ht-sdks/events-sdk-flutter
       ref: main

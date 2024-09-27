@@ -281,7 +281,7 @@ In order to customise what happens after an event is created, you can create and
 | after       | Executed after all event processing is completed. This can be used to perform cleanup operations, etc. |
 | utility     | Executed only when called manually, such as Logging.                                                   |
 
-Plugins can have their own native code (such as the iOS-only `analytics_plugin_idfa`) or wrap an underlying library (such as `analytics_plugin_firebase` which uses `firebase_core` and `firebase_analytics` under the hood)
+Plugins can have their own native code (such as the iOS-only `hightouch_events_plugin_idfa`) or wrap an underlying library (such as `hightouch_events_plugin_firebase` which uses `firebase_core` and `firebase_analytics` under the hood)
 
 ### Destination Plugins
 
@@ -369,11 +369,11 @@ Refer to the following table for Plugins you can use to meet your tracking needs
 
 | Plugin                                                                                                                      | Package                           |
 | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| [Adjust](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_adjust)                         | `analytics_plugin_adjust`         |
-| [AppsFlyer](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_appsflyer)                   | `analytics_plugin_appsflyer`      |
-| [Firebase](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_firebase)                     | `analytics_plugin_firebase`       |
-| [IDFA](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_idfa)                             | `analytics_plugin_idfa`           |
-| [Android Advertising ID](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_advertising_id) | `analytics_plugin_advertising-id` |
+| [Adjust](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_adjust)                         | `hightouch_events_plugin_adjust`         |
+| [AppsFlyer](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_appsflyer)                   | `hightouch_events_plugin_appsflyer`      |
+| [Firebase](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_firebase)                     | `hightouch_events_plugin_firebase`       |
+| [IDFA](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_idfa)                             | `hightouch_events_plugin_idfa`           |
+| [Android Advertising ID](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_advertising_id) | `hightouch_events_plugin_advertising-id` |
 
 ## Controlling Upload With Flush Policies
 
