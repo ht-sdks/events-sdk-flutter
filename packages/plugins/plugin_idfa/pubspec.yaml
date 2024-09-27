@@ -1,6 +1,6 @@
 name: hightouch_events_plugin_idfa
 description: The hassle-free way to add Hightouch Events to your Flutter app.
-version: 1.0.1
+version: 1.0.0
 homepage: https://github.com/ht-sdks/events-sdk-flutter#readme
 repository: https://github.com/ht-sdks/events-sdk-flutter/tree/main/packages/plugins/plugin_idfa#readme
 issue_tracker: https://github.com/ht-sdks/events-sdk-flutter/issues
