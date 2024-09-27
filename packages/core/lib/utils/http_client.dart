@@ -8,8 +8,8 @@ import 'package:hightouch_events/state.dart';
 import 'package:http/http.dart' as http;
 
 class HTTPClient {
-  static const defaultAPIHost = "us-east-1.hightouch-events.com/v1";
-  static const defaultCDNHost = "cdn-settings.hightouch-events.com/v1";
+  static const defaultAPIHost = "us-east-1.hightouch-events.com";
+  static const defaultCDNHost = "cdn-settings.hightouch-events.com";
 
   final WeakReference<Analytics> _analytics;
 

@@ -91,23 +91,23 @@ You must pass at least the `writeKey`. Additional configuration options are list
 | `debug`                           | false                         | When set to false, it will not generate any info logs.                                                                                                                                                                                                                          |
 | `collectDeviceId`                 | false                         | Set to true to automatically collect the device ID from the DRM API on Android devices.                                                                                                                                                                                         |
 | `flushPolicies`                   | count=30,time=20s             | List of flush policies controlling when to send batches of events to the plugins                                                                                                                                                                                                |
-| `apiHost`                         | "api.segment.io/v1"           | Used to specify the regional Segment event endpoint                                                                                                                                                                                                                             |
-| `cdnHost`                         | "cdn-settings.segment.com/v1" | Used to specify the regional Segment settings endpoint                                                                                                                                                                                                                          |
+| `apiHost`                         | "us-east-1.hightouch-events.com"           | Used to specify the regional Hightouch Events endpoint                                                                                                                                                                                                                             |
+| `cdnHost`                         | "cdn-settings.hightouch-events.com" | Used to specify the regional Hightouch Events settings endpoint                                                                                                                                                                                                                          |
 | `errorHandler`                    | null                          | Custom error handler. By default logs errors to the standard flutter logger                                                                                                                                                                                                     |
-| `trackApplicationLifecycleEvents` | false                         | Enable automatic tracking for [app lifecycle events](https://segment.com/docs/connections/spec/mobile/#lifecycle-events): application installed, opened, updated, backgrounded)                                                                                                 |
+| `trackApplicationLifecycleEvents` | false                         | Enable automatic tracking for app lifecycle events: application installed, opened, updated, backgrounded)                                                                                                 |
 | `trackDeeplinks`                  | false                         | Enable automatic tracking for when the user opens the app via a deep link. \*NOTE: when sending this flag, the sdk plugin_appsflyer will ignore [onAppOpenAttribution](https://github.com/AppsFlyerSDK/appsflyer-flutter-plugin/blob/master/doc/Guides.md#Unified-deep-linking) |
 | `autoAddSegmentDestination`       | true                          | Set to false to skip adding the SegmentDestination plugin                                                                                                                                                                                                                       |
 | `defaultIntegrationSettings`      | null                          | Plugin settings that will be used if the request to get the settings from Segment fails.                                                                                                                                                                                        |
 | `maxBatchSize`                    | true                          | 100 Maximum number of events to send to the API at once.                                                                                                                                                                                                                        |
 | `appStateStream`                  | null                          | Set to override the stream of application foreground or background events.                                                                                                                                                                                                      |
-| `requestFactory`                  | true                          | Set to override the factory to generate HTTP requests. Type: [RequestFactory](https://github.com/segmentio/analytics_flutter/blob/master/packages/core/lib/state.dart#L546)                                                                                                     |
+| `requestFactory`                  | true                          | Set to override the factory to generate HTTP requests. Type: [RequestFactory](https://github.com/ht-sdks/events-sdk-flutter/blob/master/packages/core/lib/state.dart#L546)                                                                                                     |
 | `storageJson`                     | true                          | Enable or disable automatic the generation JSON files for the serialization library                                                                                                                                                                                             |
 
 ## Client methods
 
 ### Track
 
-The [track](https://segment.com/docs/connections/spec/track/) method is how you record any actions your users perform, along with any properties that describe the action.
+The [track](https://hightouch.com/docs/events/event-spec#track-events) method is how you record any actions your users perform, along with any properties that describe the action.
 
 Method signature:
 
@@ -126,7 +126,7 @@ analytics.track("View Product", properties: {
 
 ### Screen
 
-The [screen](https://segment.com/docs/connections/spec/screen/) call lets you record whenever a user sees a screen in your mobile app, along with any properties about the screen.
+The [screen](https://hightouch.com/docs/events/event-spec#screen-events) call lets you record whenever a user sees a screen in your mobile app, along with any properties about the screen.
 
 Method signature:
 
@@ -146,7 +146,7 @@ For setting up automatic screen tracking, see the [instructions below](#automati
 
 ### Identify
 
-The [identify](https://segment.com/docs/connections/spec/identify/) call lets you tie a user to their actions and record traits about them. This includes a unique user ID and any optional traits you know about them like their email, name, etc. The traits option can include any information you might want to tie to the user, but when using any of the [reserved user traits](https://segment.com/docs/connections/spec/identify/#traits), you should make sure to only use them for their intended meaning. All reserved traits are strongly typed by the `UserTraits` class. When using traits not listsed as a reserved user trait, these will go under the `custom` property.
+The [identify](https://hightouch.com/docs/events/event-spec#identify-events) call lets you tie a user to their actions and record traits about them. This includes a unique user ID and any optional traits you know about them like their email, name, etc. The traits option can include any information you might want to tie to the user, but when using any of the reserved user traits, you should make sure to only use them for their intended meaning. All reserved traits are strongly typed by the `UserTraits` class. When using traits not listsed as a reserved user trait, these will go under the `custom` property.
 
 Method signature:
 
@@ -168,7 +168,7 @@ analytics.identify(userId: "testUserId", userTraits: UserTraits(
 
 ### Group
 
-The [group](https://segment.com/docs/connections/spec/group/) API call is how you associate an individual user with a group—be it a company, organization, account, project, team or whatever other crazy name you came up with for the same concept! This includes a unique group ID and any optional group traits you know about them like the company name industry, number of employees, etc. The traits option can include any information you might want to tie to the group, but when using any of the [reserved group traits](https://segment.com/docs/connections/spec/group/#traits), you should make sure to only use them for their intended meaning. All reserved traits are strongly typed by the `GroupTraits` class. When using traits not listsed as a reserved user trait, these will go under the `custom` property.
+The [group](https://hightouch.com/docs/events/event-spec#group-events) API call is how you associate an individual user with a group—be it a company, organization, account, project, team or whatever other crazy name you came up with for the same concept! This includes a unique group ID and any optional group traits you know about them like the company name industry, number of employees, etc. The traits option can include any information you might want to tie to the group, but when using any of the reserved group traits, you should make sure to only use them for their intended meaning. All reserved traits are strongly typed by the `GroupTraits` class. When using traits not listsed as a reserved user trait, these will go under the `custom` property.
 
 Method signature:
 
@@ -189,7 +189,7 @@ analytics.group("some-company", groupTraits: GroupTraits(
 
 ### Alias
 
-The [alias](https://segment.com/docs/connections/spec/alias/) method is used to merge two user identities, effectively connecting two sets of user data as one. This is an advanced method, but it is required to manage user identities successfully in some of our destinations.
+The [alias](https://hightouch.com/docs/events/event-spec#alias-events) method is used to merge two user identities, effectively connecting two sets of user data as one. This is an advanced method, but it is required to manage user identities successfully in some of our destinations.
 
 Method signature:
 
@@ -369,11 +369,11 @@ Refer to the following table for Plugins you can use to meet your tracking needs
 
 | Plugin                                                                                                                      | Package                           |
 | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| [Adjust](https://github.com/segmentio/analytics_flutter/tree/master/packages/plugins/plugin_adjust)                         | `analytics_plugin_adjust`         |
-| [AppsFlyer](https://github.com/segmentio/analytics_flutter/tree/master/packages/plugins/plugin_appsflyer)                   | `analytics_plugin_appsflyer`      |
-| [Firebase](https://github.com/segmentio/analytics_flutter/tree/master/packages/plugins/plugin_firebase)                     | `analytics_plugin_firebase`       |
-| [IDFA](https://github.com/segmentio/analytics_flutter/tree/master/packages/plugins/plugin_idfa)                             | `analytics_plugin_idfa`           |
-| [Android Advertising ID](https://github.com/segmentio/analytics_flutter/tree/master/packages/plugins/plugin_advertising_id) | `analytics_plugin_advertising-id` |
+| [Adjust](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_adjust)                         | `analytics_plugin_adjust`         |
+| [AppsFlyer](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_appsflyer)                   | `analytics_plugin_appsflyer`      |
+| [Firebase](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_firebase)                     | `analytics_plugin_firebase`       |
+| [IDFA](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_idfa)                             | `analytics_plugin_idfa`           |
+| [Android Advertising ID](https://github.com/ht-sdks/events-sdk-flutter/tree/master/packages/plugins/plugin_advertising_id) | `analytics_plugin_advertising-id` |
 
 ## Controlling Upload With Flush Policies
 
@@ -562,6 +562,3 @@ Before contributing, please also see our [code of conduct](../../CODE_OF_CONDUCT
 MIT
 
 [^1]: The Flutter name and logo are trademarks owned by Google.
-
-[circleci-image]: TODO
-[circleci-url]: https://app.circleci.com/pipelines/github/segmentio/analytics-flutter
