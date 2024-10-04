@@ -344,6 +344,8 @@ class Analytics with ClientMethods {
     });
   }
 
+  // HT does not use this since we don't load remote destination settings.
+  // ignore: unused_element
   Future _fetchSettings() async {
     final settings = await httpClient.settingsFor(state.configuration.state.writeKey);
     if (settings == null) {
