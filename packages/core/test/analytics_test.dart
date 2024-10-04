@@ -44,7 +44,8 @@ void main() {
 
       verify(httpClient.settingsFor(writeKey));
       verifyNever(httpClient.startBatchUpload(writeKey, batch));
-    });
+    }, skip: true /* HT doesn't use settings */);
+
     test("it fetches settings and fires track event when tracking lifecycle events", () async {
       final httpClient = Mocks.httpClient();
       when(httpClient.settingsFor(writeKey)).thenAnswer((_) => Future.value(HightouchAPISettings({})));
@@ -59,6 +60,6 @@ void main() {
 
       verify(httpClient.settingsFor(writeKey));
       verifyNever(httpClient.startBatchUpload(writeKey, batch));
-    });
+    }, skip: true /* HT doesn't use settings */);
   });
 }
