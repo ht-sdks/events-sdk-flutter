@@ -244,7 +244,7 @@ class Analytics with ClientMethods {
       return;
     }
 
-    await _fetchSettings();
+    // await _fetchSettings();
 
     // flush any stored events
     _flushPolicyExecuter.manualFlush();
@@ -398,7 +398,7 @@ class Analytics with ClientMethods {
             properties: priorAppState == AppStatus.background
                 ? {}
                 : {"from_background": true, "version": context?.app.version, "build": context?.app.build});
-        await _fetchSettings();
+        // await _fetchSettings();
       } else if ((priorAppState == null || priorAppState == AppStatus.foreground) &&
           nextAppState == AppStatus.background) {
         track("Application Backgrounded");

@@ -8,15 +8,15 @@ import 'package:hightouch_events/state.dart';
 import 'package:http/http.dart' as http;
 
 class HTTPClient {
-  static const defaultAPIHost = "us-east-1.hightouch-events.com";
-  static const defaultCDNHost = "cdn-settings.hightouch-events.com";
+  static const defaultAPIHost = "https://us-east-1.hightouch-events.com";
+  static const defaultCDNHost = "https://cdn-settings.hightouch-events.com";
 
   final WeakReference<Analytics> _analytics;
 
   HTTPClient(Analytics analytics) : _analytics = WeakReference(analytics);
 
   Uri _url(String host, String path) {
-    String s = "https://$host$path";
+    String s = "$host$path";
     Uri result = Uri.parse(s);
     return result;
   }
@@ -29,7 +29,7 @@ class HTTPClient {
   ///   - completion: The closure executed when done. Passes if the task should be retried or not if failed.
   Future<bool> startBatchUpload(String writeKey, List<RawEvent> batch, {String? host}) async {
     final apihost = _analytics.target!.state.configuration.state.apiHost ?? host ?? defaultAPIHost;
-    Uri uploadURL = _url(apihost, "/b");
+    Uri uploadURL = _url(apihost, "/v1/batch");
 
     try {
       var urlRequest = _configuredRequest(uploadURL, "POST",
