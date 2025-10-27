@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:hightouch_events/analytics.dart' show Analytics;
 import 'package:hightouch_events/plugin.dart';
 import 'package:hightouch_events_plugin_idfa/native_idfa.dart';
 
@@ -15,7 +16,14 @@ class IdfaData {
 }
 
 class PluginIdfa extends Plugin {
-  PluginIdfa({bool shouldAskPermission = true}) : super(PluginType.enrichment) {
+  final bool shouldAskPermission;
+
+  PluginIdfa({this.shouldAskPermission = true}) : super(PluginType.enrichment);
+
+  @override
+  void configure(Analytics analytics) {
+    super.configure(analytics);
+
     if (kIsWeb) {
       return;
     }
@@ -36,7 +44,8 @@ class PluginIdfa extends Plugin {
   }
 
   Future<IdfaData> getTrackingStatus() async {
-    final NativeIdfaData idfaData = await PluginIdfaPlatform.instance.getTrackingAuthorizationStatus();
+    final NativeIdfaData idfaData =
+        await PluginIdfaPlatform.instance.getTrackingAuthorizationStatus();
 
     final context = await analytics?.state.context.state;
 
@@ -49,6 +58,10 @@ class PluginIdfa extends Plugin {
       analytics?.state.context.setState(context);
     }
 
-    return IdfaData(idfaData.adTrackingEnabled ?? false, idfaData.advertisingId, idfaData.trackingStatus);
+    return IdfaData(
+      idfaData.adTrackingEnabled ?? false,
+      idfaData.advertisingId,
+      idfaData.trackingStatus,
+    );
   }
 }
