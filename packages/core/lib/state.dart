@@ -98,7 +98,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
   @protected
   T fromJson(Map<String, dynamic> json);
 
-  _whenPersistenceComplete() {
+  void _whenPersistenceComplete() {
     if (_hasUpdated) {
       _hasUpdated = false;
       final state = _notifier.state;
@@ -156,7 +156,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
   }
 
   void init(ErrorHandler errorHandler, bool storageJson) {
-    this._errorHandler = errorHandler;
+    _errorHandler = errorHandler;
     addListener((state) {
       if (_persistance != null) {
         _hasUpdated = true;
@@ -252,7 +252,7 @@ class QueueState<T extends JSONSerialisable> extends PersistedState<List<T>> {
 }
 
 class SystemState extends StateNotifier<System> {
-  SystemState(System system) : super(system);
+  SystemState(super.system);
 
   set isRunning(bool isRunning) {
     state = System(state.isEnabled, isRunning);
@@ -473,7 +473,7 @@ class TransformerConfigMap {
 }
 
 class IntegrationsState extends StateNotifier<Map<String, dynamic>> {
-  IntegrationsState(Map<String, dynamic> integrations) : super(integrations);
+  IntegrationsState(super.integrations);
 
   @override
   Map<String, dynamic> get state => super.state;
@@ -489,7 +489,7 @@ class IntegrationsState extends StateNotifier<Map<String, dynamic>> {
 }
 
 class ConfigurationState extends StateNotifier<Configuration> {
-  ConfigurationState(Configuration configuration) : super(configuration);
+  ConfigurationState(super.configuration);
 
   @override
   Configuration get state => super.state;

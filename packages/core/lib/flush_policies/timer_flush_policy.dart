@@ -7,7 +7,7 @@ class TimerFlushPolicy extends FlushPolicy {
   Timer? _timer;
   final int _interval;
 
-  _startTimer() {
+  void _startTimer() {
     _timer?.cancel();
     _timer = Timer(Duration(milliseconds: _interval), () {
       shouldFlush = true;
