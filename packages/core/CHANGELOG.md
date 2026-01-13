@@ -1,3 +1,9 @@
+## 1.0.2
+
+- Updated dependencies to latest versions
+- Fixed flutter_fgbg API breaking change (FGBGEvents.stream → FGBGEvents.instance.stream)
+- Code style modernization for flutter_lints 6.0
+
 ## 1.1.0
 
 - Cleared out malformed files on error and reduced chance of files not writing completely if program exits prematurely

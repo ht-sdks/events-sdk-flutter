@@ -1,6 +1,6 @@
 name: hightouch_events
 description: The hassle-free way to add Hightouch Events to your Flutter app.
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/ht-sdks/events-sdk-flutter#readme
 repository: https://github.com/ht-sdks/events-sdk-flutter/tree/main/packages/core#readme
 issue_tracker: https://github.com/ht-sdks/events-sdk-flutter/issues
