@@ -61,6 +61,17 @@ class AdjustDestination extends DestinationPlugin {
     }
 
     Adjust.initSdk(adjustConfig);
+
+    // In Adjust SDK v5, isFirstSessionDelayEnabled causes an indefinite delay
+    // (unlike v4's delayStart which was a timed timeout). We must explicitly
+    // call sendFirstPackages() after the configured delay to resume SDK
+    // operation and prevent permanent loss of attribution data.
+    if (useDelay == true) {
+      final delaySecs = adjustSettings!.delayTime ?? 0;
+      Future.delayed(Duration(seconds: delaySecs), () {
+        Adjust.sendFirstPackages();
+      });
+    }
   }
 
   @override
