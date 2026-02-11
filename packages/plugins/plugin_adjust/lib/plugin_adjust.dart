@@ -1,5 +1,3 @@
-library hightouch_events_plugin_adjust;
-
 import 'package:adjust_sdk/adjust.dart';
 import 'package:adjust_sdk/adjust_config.dart';
 import 'package:adjust_sdk/adjust_event.dart';
@@ -57,32 +55,24 @@ class AdjustDestination extends DestinationPlugin {
       hasRegisteredCallback = true;
     }
 
-    final bufferingEnabled = adjustSettings!.setEventBufferingEnabled;
-    if (bufferingEnabled == true) {
-      adjustConfig.eventBufferingEnabled = bufferingEnabled;
-    }
-
     final useDelay = adjustSettings!.setDelay;
     if (useDelay == true) {
-      final delayTime = adjustSettings!.delayTime;
-      if (delayTime != null) {
-        adjustConfig.delayStart = delayTime.toDouble();
-      }
+      adjustConfig.isFirstSessionDelayEnabled = true;
     }
 
-    Adjust.start(adjustConfig);
+    Adjust.initSdk(adjustConfig);
   }
 
   @override
   identify(event) async {
     final userId = event.userId;
     if (userId != null && userId.isNotEmpty) {
-      Adjust.addSessionPartnerParameter('user_id', userId);
+      Adjust.addGlobalPartnerParameter('user_id', userId);
     }
 
     final anonId = event.anonymousId;
     if (anonId != null && anonId.isNotEmpty) {
-      Adjust.addSessionPartnerParameter('anonymous_id', anonId);
+      Adjust.addGlobalPartnerParameter('anonymous_id', anonId);
     }
     return event;
   }
@@ -91,7 +81,7 @@ class AdjustDestination extends DestinationPlugin {
   track(event) async {
     final anonId = event.anonymousId;
     if (anonId != null && anonId.isNotEmpty) {
-      Adjust.addSessionPartnerParameter('anonymous_id', anonId);
+      Adjust.addGlobalPartnerParameter('anonymous_id', anonId);
     }
 
     if (adjustSettings == null) {
@@ -128,6 +118,6 @@ class AdjustDestination extends DestinationPlugin {
 
   @override
   reset() {
-    Adjust.resetSessionPartnerParameters();
+    Adjust.removeGlobalPartnerParameters();
   }
 }
