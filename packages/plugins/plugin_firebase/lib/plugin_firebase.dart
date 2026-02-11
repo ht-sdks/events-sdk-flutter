@@ -1,5 +1,3 @@
-library hightouch_events_plugin_firebase;
-
 import 'package:hightouch_events/event.dart';
 import 'package:hightouch_events/logger.dart';
 import 'package:hightouch_events/plugin.dart';
