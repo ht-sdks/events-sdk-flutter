@@ -1,5 +1,3 @@
-library hightouch_events_plugin_appsflyer;
-
 import 'dart:convert';
 
 import 'package:hightouch_events/analytics.dart';
