@@ -143,9 +143,9 @@ class HightouchEventsPlugin : FlutterPlugin, NativeContextApi, EventChannel.Stre
                 NativeContext(
                     app = NativeContextApp(
                         build = appBuild,
-                        name = packageInfo.applicationInfo.loadLabel(
+                        name = packageInfo.applicationInfo?.loadLabel(
                             packageManager
-                        ).toString(),
+                        )?.toString() ?: packageInfo.packageName,
                         namespace = packageInfo.packageName,
                         version = packageInfo.versionName
                     ),
