@@ -1,1 +1,1 @@
-const hightouchVersion = "1.0.2";
+const hightouchVersion = "1.0.3";
