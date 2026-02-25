@@ -1,3 +1,7 @@
+## 1.0.3
+
+- Fixed nullable receiver issue for applicationInfo on Android API 33+
+
 ## 1.0.2
 
 - Updated dependencies to latest versions
