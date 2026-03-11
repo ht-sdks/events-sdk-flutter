@@ -344,7 +344,9 @@ class DeepLinkDataState extends PersistedState<DeepLinkData> {
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class DeepLinkData {
+  @JsonKey(defaultValue: '')
   final String referringApplication;
+  @JsonKey(defaultValue: '')
   final String url;
 
   DeepLinkData(this.referringApplication, this.url);

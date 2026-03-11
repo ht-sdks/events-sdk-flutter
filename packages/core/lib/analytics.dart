@@ -87,7 +87,12 @@ class Analytics with ClientMethods {
     if (state.configuration.state.trackDeeplinks) {
       AnalyticsPlatform.instance.linkStream.listen((event) {
         if (state.configuration.state.trackDeeplinks) {
-          _trackDeepLinkEvent(DeepLinkData.fromJson(event));
+          try {
+            _trackDeepLinkEvent(DeepLinkData.fromJson(event));
+          } catch (e) {
+            log("Error processing deep link data: $e",
+                kind: LogFilterKind.warning);
+          }
         }
       });
     }
