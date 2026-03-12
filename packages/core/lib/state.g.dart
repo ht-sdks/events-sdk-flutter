@@ -34,8 +34,8 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) {
 }
 
 DeepLinkData _$DeepLinkDataFromJson(Map<String, dynamic> json) => DeepLinkData(
-      json['referringApplication'] as String? ?? '',
-      json['url'] as String? ?? '',
+      json['referringApplication'] as String?,
+      json['url'] as String,
     );
 
 Map<String, dynamic> _$DeepLinkDataToJson(DeepLinkData instance) => <String, dynamic>{

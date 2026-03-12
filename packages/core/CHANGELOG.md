@@ -1,3 +1,9 @@
+## 1.0.4
+
+- Fixed `TypeError: type 'Null' is not a subtype of type 'String'` crash in `DeepLinkData.fromJson` when `referringApplication` is null in the deep link event payload from Android
+- Made `referringApplication` nullable to accurately represent cases where the referring app is unknown
+- Added defensive error handling around deep link event processing
+
 ## 1.0.3
 
 - Fixed nullable receiver issue for applicationInfo on Android API 33+
