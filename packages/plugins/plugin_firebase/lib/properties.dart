@@ -28,14 +28,19 @@ String sanitizeEventName(String eventName) {
   return eventName.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
 }
 
-Map<String, Object?> castParameterType(Map<String, Object?> properties) {
-  return properties.map((key, value) {
-    if (value is String || value is num || value == null) {
-      return MapEntry(key, value);
+Map<String, Object> castParameterType(Map<String, Object?> properties) {
+  final Map<String, Object> result = {};
+  for (final entry in properties.entries) {
+    final value = entry.value;
+    if (value == null) {
+      continue;
+    } else if (value is String || value is num) {
+      result[entry.key] = value;
     } else {
-      return MapEntry(key, value.toString());
+      result[entry.key] = value.toString();
     }
-  });
+  }
+  return result;
 }
 
 @JsonSerializable()
