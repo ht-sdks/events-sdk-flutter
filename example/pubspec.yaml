@@ -30,17 +30,24 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  hightouch_events: ^1.0.0
+  # External source setup kept here for reference:
+  # hightouch_events: ^1.0.0
+  hightouch_events:
+    path: ../packages/core
+  # hightouch_events_plugin_advertising_id:
+  #   git:
+  #     url: https://github.com/ht-sdks/events-sdk-flutter
+  #     ref: main
+  #     path: packages/plugins/plugin_advertising_id
   hightouch_events_plugin_advertising_id:
-    git:
-      url: https://github.com/ht-sdks/events-sdk-flutter
-      ref: main
-      path: packages/plugins/plugin_advertising_id
+    path: ../packages/plugins/plugin_advertising_id
+  # hightouch_events_plugin_idfa:
+  #   git:
+  #     url: https://github.com/ht-sdks/events-sdk-flutter
+  #     ref: main
+  #     path: packages/plugins/plugin_idfa
   hightouch_events_plugin_idfa:
-    git:
-      url: https://github.com/ht-sdks/events-sdk-flutter
-      ref: main
-      path: packages/plugins/plugin_idfa
+    path: ../packages/plugins/plugin_idfa
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -56,6 +63,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+
+dependency_overrides:
+  hightouch_events:
+    path: ../packages/core
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

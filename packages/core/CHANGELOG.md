@@ -1,3 +1,8 @@
+## 1.0.5
+
+- Fixed an issue where SDK-generated event timestamps could be sent without UTC normalization, which could shift event times on some devices.
+- Updated SDK-generated `timestamp` and `sentAt` fields to be sent as UTC ISO-8601 timestamps.
+
 ## 1.0.4
 
 - Fixed `TypeError: type 'Null' is not a subtype of type 'String'` crash in `DeepLinkData.fromJson` when `referringApplication` is null in the deep link event payload from Android

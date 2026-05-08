@@ -79,4 +79,24 @@ void main() {
       expect(context.traits.custom["custom"], reverseContext.traits.custom["custom"]);
     });
   });
+
+  group("RawEvent timestamps", () {
+    test("It fills missing timestamps with a UTC ISO-8601 string", () {
+      final event = TrackEvent("UTC Timestamp");
+
+      applyRawEventData(event);
+
+      expect(event.timestamp, isNotNull);
+      expect(DateTime.parse(event.timestamp!).isUtc, isTrue);
+    });
+
+    test("It preserves caller-provided timestamps", () {
+      final event = TrackEvent("Provided Timestamp")
+        ..timestamp = "2026-05-08T12:34:56.000-05:00";
+
+      applyRawEventData(event);
+
+      expect(event.timestamp, "2026-05-08T12:34:56.000-05:00");
+    });
+  });
 }

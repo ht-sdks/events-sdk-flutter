@@ -98,10 +98,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_fgbg
-      sha256: "08c4d2fd229e3df26083d5aecc3dea9ff4f2d188f8cd57aaf2b3f047bd08a047"
+      sha256: eb6da9b2047372566a6e17b505975fe5bace94af01f6fc825c4b6f81baa6c447
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.7.1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -123,28 +123,23 @@ packages:
   hightouch_events:
     dependency: "direct main"
     description:
-      name: hightouch_events
-      sha256: "04c3b41e5d7c7bb1684878af30565643e884e94c05932963ddde19fcbe581407"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
+      path: "../packages/core"
+      relative: true
+    source: path
+    version: "1.0.5"
   hightouch_events_plugin_advertising_id:
     dependency: "direct main"
     description:
-      path: "packages/plugins/plugin_advertising_id"
-      ref: main
-      resolved-ref: a2080185c5c4235cb853057b25eeb700e478976c
-      url: "https://github.com/ht-sdks/events-sdk-flutter"
-    source: git
+      path: "../packages/plugins/plugin_advertising_id"
+      relative: true
+    source: path
     version: "1.0.0"
   hightouch_events_plugin_idfa:
     dependency: "direct main"
     description:
-      path: "packages/plugins/plugin_idfa"
-      ref: main
-      resolved-ref: a2080185c5c4235cb853057b25eeb700e478976c
-      url: "https://github.com/ht-sdks/events-sdk-flutter"
-    source: git
+      path: "../packages/plugins/plugin_idfa"
+      relative: true
+    source: path
     version: "1.0.0"
   http:
     dependency: transitive
@@ -387,10 +382,10 @@ packages:
     dependency: transitive
     description:
       name: state_notifier
-      sha256: "8fe42610f179b843b12371e40db58c9444f8757f8b69d181c97e50787caed289"
+      sha256: b8677376aa54f2d7c58280d5a007f9e8774f1968d1fb1c096adcb4792fba29bb
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.2+1"
+    version: "1.0.0"
   stream_channel:
     dependency: transitive
     description:
@@ -459,10 +454,10 @@ packages:
     dependency: transitive
     description:
       name: web
-      sha256: "97da13628db363c635202ad97068d47c5b8aa555808e7a9411963c533b449b27"
+      sha256: "868d88a33d8a87b18ffc05f9f030ba328ffefba92d6c127917a2ba740f9cfe4a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.1"
+    version: "1.1.1"
   xdg_directories:
     dependency: transitive
     description:
