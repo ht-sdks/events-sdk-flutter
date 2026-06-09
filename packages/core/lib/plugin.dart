@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:hightouch_events/analytics.dart';
 import 'package:hightouch_events/event.dart';
 import 'package:hightouch_events/timeline.dart';
@@ -39,7 +41,7 @@ mixin Flushable {
   Future flush();
 }
 mixin Resetable {
-  void reset();
+  FutureOr<void> reset();
 }
 
 abstract class EventPlugin extends Plugin with Flushable, Resetable {
@@ -154,7 +156,8 @@ abstract class DestinationPlugin extends EventPlugin {
       return null;
     }
 
-    final enrichmentResult = await timeline.applyPlugins(PluginType.enrichment, event);
+    final enrichmentResult =
+        await timeline.applyPlugins(PluginType.enrichment, event);
     if (enrichmentResult == null) {
       return null;
     }
