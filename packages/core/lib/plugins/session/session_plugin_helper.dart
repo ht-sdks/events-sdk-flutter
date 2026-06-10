@@ -12,6 +12,19 @@ class EnrichedSessionEvent {
 }
 
 class SessionPluginHelper {
+  static void validateSessionTimeouts(Configuration config) {
+    if (config.foregroundSessionTimeout < 0) {
+      throw ArgumentError(
+        'foregroundSessionTimeout must be greater than or equal to zero.',
+      );
+    }
+    if (config.backgroundSessionTimeout < 0) {
+      throw ArgumentError(
+        'backgroundSessionTimeout must be greater than or equal to zero.',
+      );
+    }
+  }
+
   static bool isEnabled(Configuration config) {
     return !(config.foregroundSessionTimeout == 0 &&
         config.backgroundSessionTimeout == 0);

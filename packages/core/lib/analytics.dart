@@ -66,6 +66,8 @@ class Analytics with ClientMethods {
 
     state.ready.then((_) => _onStateReady());
 
+    SessionPluginHelper.validateSessionTimeouts(config);
+
     if (SessionPluginHelper.isEnabled(config)) {
       addPlugin(SessionPlugin());
     }

@@ -157,6 +157,23 @@ void main() {
       });
     });
 
+    test('rejects negative session timeouts', () {
+      expect(
+        () => SessionPluginHelper.validateSessionTimeouts(Configuration(
+          'write-key',
+          foregroundSessionTimeout: -1,
+        )),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => SessionPluginHelper.validateSessionTimeouts(Configuration(
+          'write-key',
+          backgroundSessionTimeout: -1,
+        )),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
     test('is disabled only when both timeouts are zero', () {
       expect(
         SessionPluginHelper.isEnabled(Configuration(
