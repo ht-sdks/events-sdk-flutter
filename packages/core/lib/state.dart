@@ -118,9 +118,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
           reportInternalError(InconsistentStateError(_key));
         }
       } else {}
-      _persistance = _store
-          .setPersisted(_key, toJson(state as T))
-          .whenComplete(_whenPersistenceComplete);
+      _persistance = _store.setPersisted(_key, toJson(state as T)).whenComplete(_whenPersistenceComplete);
     } else {
       _persistance = null;
     }
@@ -136,8 +134,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
   }
 
   @override
-  RemoveListener addListener(Listener<T> listener,
-      {bool fireImmediately = true}) {
+  RemoveListener addListener(Listener<T> listener, {bool fireImmediately = true}) {
     return _notifier.addListener((v) {
       if (v != null) {
         listener(v);
@@ -177,9 +174,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
         _hasUpdated = true;
       } else {
         _persistance = storageJson
-            ? _store
-                .setPersisted(_key, toJson(state))
-                .whenComplete(_whenPersistenceComplete)
+            ? _store.setPersisted(_key, toJson(state)).whenComplete(_whenPersistenceComplete)
             : null;
       }
     });
@@ -200,9 +195,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
       if (rawV == null) {
         final init = await _initialiser();
         _persistance = storageJson
-            ? _store
-                .setPersisted(_key, toJson(init))
-                .whenComplete(_whenPersistenceComplete)
+            ? _store.setPersisted(_key, toJson(init)).whenComplete(_whenPersistenceComplete)
             : null;
         _notifier.nonNullState = init;
         v = init;
@@ -340,8 +333,7 @@ class UserInfo {
 
   UserInfo(this.anonymousId, {this.userId, this.groupTraits, this.userTraits});
 
-  factory UserInfo.fromJson(Map<String, dynamic> json) =>
-      _$UserInfoFromJson(json);
+  factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserInfoFromJson(json);
   Map<String, dynamic> toJson() => _$UserInfoToJson(this);
 }
 
@@ -386,8 +378,7 @@ class DeepLinkData {
 
   DeepLinkData(this.referringApplication, this.url);
 
-  factory DeepLinkData.fromJson(Map<String, dynamic> json) =>
-      _$DeepLinkDataFromJson(json);
+  factory DeepLinkData.fromJson(Map<String, dynamic> json) => _$DeepLinkDataFromJson(json);
   Map<String, dynamic> toJson() => _$DeepLinkDataToJson(this);
 }
 
@@ -395,8 +386,7 @@ class ContextState extends PersistedState<Context?> {
   ContextState(Store store, Configuration config)
       : super("context", store, () async {
           return Context.fromNative(
-              await AnalyticsPlatform.instance
-                  .getContext(collectDeviceId: config.collectDeviceId),
+              await AnalyticsPlatform.instance.getContext(collectDeviceId: config.collectDeviceId),
               UserTraits());
         });
 
@@ -418,8 +408,7 @@ class HightouchAPISettings {
 
   HightouchAPISettings(this.integrations, {this.middlewareSettings});
 
-  factory HightouchAPISettings.fromJson(Map<String, dynamic> json) =>
-      _$HightouchAPISettingsFromJson(json);
+  factory HightouchAPISettings.fromJson(Map<String, dynamic> json) => _$HightouchAPISettingsFromJson(json);
   Map<String, dynamic> toJson() => _$HightouchAPISettingsToJson(this);
 }
 
@@ -429,8 +418,7 @@ class MiddlewareSettings {
 
   MiddlewareSettings({this.routingRules = const []});
 
-  factory MiddlewareSettings.fromJson(Map<String, dynamic> json) =>
-      _$MiddlewareSettingsFromJson(json);
+  factory MiddlewareSettings.fromJson(Map<String, dynamic> json) => _$MiddlewareSettingsFromJson(json);
   Map<String, dynamic> toJson() => _$MiddlewareSettingsToJson(this);
 }
 
@@ -444,12 +432,9 @@ class RoutingRule {
   final String? destinationName;
 
   RoutingRule(this.scope, this.targetType,
-      {this.destinationName,
-      this.matchers = const [],
-      this.transformers = const []});
+      {this.destinationName, this.matchers = const [], this.transformers = const []});
 
-  factory RoutingRule.fromJson(Map<String, dynamic> json) =>
-      _$RoutingRuleFromJson(json);
+  factory RoutingRule.fromJson(Map<String, dynamic> json) => _$RoutingRuleFromJson(json);
   Map<String, dynamic> toJson() => _$RoutingRuleToJson(this);
 }
 
@@ -462,8 +447,7 @@ class Matcher {
 
   Matcher(this.type, this.ir);
 
-  factory Matcher.fromJson(Map<String, dynamic> json) =>
-      _$MatcherFromJson(json);
+  factory Matcher.fromJson(Map<String, dynamic> json) => _$MatcherFromJson(json);
   Map<String, dynamic> toJson() => _$MatcherToJson(this);
 }
 
@@ -474,8 +458,7 @@ class Transformer {
 
   Transformer(this.type, {this.config});
 
-  factory Transformer.fromJson(Map<String, dynamic> json) =>
-      _$TransformerFromJson(json);
+  factory Transformer.fromJson(Map<String, dynamic> json) => _$TransformerFromJson(json);
   Map<String, dynamic> toJson() => _$TransformerToJson(this);
 }
 
@@ -488,8 +471,7 @@ class TransformerConfig {
 
   TransformerConfig({this.allow, this.drop, this.map, this.sample});
 
-  factory TransformerConfig.fromJson(Map<String, dynamic> json) =>
-      _$TransformerConfigFromJson(json);
+  factory TransformerConfig.fromJson(Map<String, dynamic> json) => _$TransformerConfigFromJson(json);
   Map<String, dynamic> toJson() => _$TransformerConfigToJson(this);
 }
 
@@ -515,8 +497,7 @@ class TransformerConfigMap {
 
   TransformerConfigMap({this.copy, this.move, this.set, this.enableToString});
 
-  factory TransformerConfigMap.fromJson(Map<String, dynamic> json) =>
-      _$TransformerConfigMapFromJson(json);
+  factory TransformerConfigMap.fromJson(Map<String, dynamic> json) => _$TransformerConfigMapFromJson(json);
   Map<String, dynamic> toJson() => _$TransformerConfigMapToJson(this);
 }
 
@@ -595,8 +576,7 @@ class Configuration {
 typedef ErrorHandler = void Function(Exception);
 typedef RequestFactory = Request Function(Request);
 
-Configuration setFlushPolicies(
-    Configuration a, List<FlushPolicy> flushPolicies) {
+Configuration setFlushPolicies(Configuration a, List<FlushPolicy> flushPolicies) {
   return Configuration(a.writeKey,
       apiHost: a.apiHost,
       autoAddHightouchDestination: a.autoAddHightouchDestination,
