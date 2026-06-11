@@ -153,7 +153,7 @@ class SessionPluginHelper {
       return state;
     }
 
-    return state.copyWith(backgroundedAt: now);
+    return state.copyWith(backgroundedAt: state.backgroundedAt ?? now);
   }
 
   static SessionState? markForegrounded({

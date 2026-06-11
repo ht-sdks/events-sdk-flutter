@@ -120,6 +120,45 @@ void main() {
     });
 
     test(
+        'preserves backgroundedAt when re-backgrounding with pending rotation',
+        () {
+      final backgroundedState = initialState.copyWith(backgroundedAt: 1500);
+      final foregroundedState = SessionPluginHelper.markForegrounded(
+        state: backgroundedState,
+        now: 4000,
+        backgroundSessionTimeout: 2000,
+      );
+
+      expect(foregroundedState?.backgroundedAt, 1500);
+
+      final rebackgroundedState = SessionPluginHelper.markBackgrounded(
+        foregroundedState,
+        5100,
+      );
+
+      expect(rebackgroundedState?.backgroundedAt, 1500);
+
+      final result = SessionPluginHelper.processEvent(
+        state: rebackgroundedState,
+        now: 5200,
+        messageId: 'delayed-rotation-message-id',
+        timestamp: '2026-01-01T00:00:05.200Z',
+        foregroundSessionTimeout: 1800000,
+        backgroundSessionTimeout: 2000,
+      );
+
+      expect(result.contextSession.toJson(), {
+        'sessionId': 5200,
+        'sessionIndex': 1,
+        'sessionStart': true,
+        'eventIndex': 0,
+        'previousSessionId': 1000,
+        'firstEventId': 'delayed-rotation-message-id',
+        'firstEventTimestamp': '2026-01-01T00:00:05.200Z',
+      });
+    });
+
+    test(
         'rotates on cold start when persisted background duration exceeded timeout',
         () {
       final result = SessionPluginHelper.processEvent(
