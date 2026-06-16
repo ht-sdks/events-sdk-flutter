@@ -1,3 +1,8 @@
+## 1.1.0
+
+- Added session tracking via `SessionPlugin`, enriching events with a `session` context object and top-level `sessionId` and `sessionStart` fields for parity with the JS SDK.
+- Added configurable `foregroundSessionTimeout` and `backgroundSessionTimeout` options on `Configuration` (default 30 minutes each); set both to `0` to disable session tracking.
+
 ## 1.0.5
 
 - Fixed an issue where SDK-generated event timestamps could be sent without UTC normalization, which could shift event times on some devices.
