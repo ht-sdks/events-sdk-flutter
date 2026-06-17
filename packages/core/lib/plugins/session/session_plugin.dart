@@ -5,16 +5,21 @@ import 'package:hightouch_events/event.dart';
 import 'package:hightouch_events/plugin.dart';
 import 'package:hightouch_events/plugins/session/session_plugin_helper.dart';
 import 'package:hightouch_events/plugins/session/session_state.dart';
+import 'package:hightouch_events/plugins/session/session_state_coordinator.dart';
 import 'package:hightouch_events/utils/lifecycle/lifecycle.dart';
 
 class SessionPlugin extends PlatformPlugin with Resetable {
-  SessionPlugin({int Function()? now})
-      : now = now ?? (() => DateTime.now().millisecondsSinceEpoch),
+  SessionPlugin({
+    int Function()? now,
+    SessionStateCoordinator? sessionStateCoordinator,
+  })  : now = now ?? (() => DateTime.now().millisecondsSinceEpoch),
+        _sessionStateCoordinator =
+            sessionStateCoordinator ?? SessionStateCoordinator(),
         super(PluginType.enrichment);
 
   final int Function() now;
+  final SessionStateCoordinator _sessionStateCoordinator;
   StreamSubscription<AppStatus>? _appStateSubscription;
-  bool _isAppInBackground = false;
 
   @override
   void configure(Analytics analytics) {
@@ -44,19 +49,16 @@ class SessionPlugin extends PlatformPlugin with Resetable {
 
     final currentTime = now();
     final config = analytics.state.configuration.state;
-    final result = SessionPluginHelper.processEvent(
-      state: await analytics.state.sessionState.state,
+    final result = await _sessionStateCoordinator.processEvent(
+      sessionStateStore: analytics.state.sessionState,
+      config: config,
       now: currentTime,
       messageId: event.messageId ?? '',
       timestamp: event.timestamp ??
           DateTime.fromMillisecondsSinceEpoch(currentTime, isUtc: true)
               .toIso8601String(),
-      foregroundSessionTimeout: config.foregroundSessionTimeout,
-      backgroundSessionTimeout: config.backgroundSessionTimeout,
-      isAppInBackground: _isAppInBackground,
     );
 
-    analytics.state.sessionState.setState(result.sessionState);
     event.context = _addSessionContext(event.context, result.contextSession);
     return event;
   }
@@ -70,41 +72,26 @@ class SessionPlugin extends PlatformPlugin with Resetable {
     }
 
     final currentTime = now();
-    final state = await analytics.state.sessionState.state;
-    analytics.state.sessionState.setState(SessionPluginHelper.rotateSession(
-      state,
-      currentTime,
-      '',
-      DateTime.fromMillisecondsSinceEpoch(currentTime, isUtc: true)
+    await _sessionStateCoordinator.rotateOnReset(
+      sessionStateStore: analytics.state.sessionState,
+      now: currentTime,
+      timestamp: DateTime.fromMillisecondsSinceEpoch(currentTime, isUtc: true)
           .toIso8601String(),
-    ));
+    );
   }
 
   Future<void> handleAppStateChange(AppStatus nextAppState) async {
     final analytics = this.analytics;
-    if (analytics == null ||
-        !SessionPluginHelper.isEnabled(analytics.state.configuration.state)) {
-      _isAppInBackground = nextAppState == AppStatus.background;
-      return;
-    }
+    final sessionEnabled = analytics != null &&
+        SessionPluginHelper.isEnabled(analytics.state.configuration.state);
 
-    final wasInBackground = _isAppInBackground;
-    _isAppInBackground = nextAppState == AppStatus.background;
-
-    if (!wasInBackground && _isAppInBackground) {
-      final state = await analytics.state.sessionState.state;
-      analytics.state.sessionState
-          .setState(SessionPluginHelper.markBackgrounded(state, now()));
-    } else if (wasInBackground && !_isAppInBackground) {
-      final config = analytics.state.configuration.state;
-      final state = await analytics.state.sessionState.state;
-      analytics.state.sessionState
-          .setState(SessionPluginHelper.markForegrounded(
-        state: state,
-        now: now(),
-        backgroundSessionTimeout: config.backgroundSessionTimeout,
-      ));
-    }
+    await _sessionStateCoordinator.onAppStateChange(
+      nextAppState: nextAppState,
+      sessionStateStore: analytics?.state.sessionState,
+      config: analytics?.state.configuration.state,
+      now: now,
+      sessionEnabled: sessionEnabled,
+    );
   }
 
   Context? _addSessionContext(

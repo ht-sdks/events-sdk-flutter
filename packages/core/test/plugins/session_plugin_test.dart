@@ -7,6 +7,7 @@ import 'package:hightouch_events/event.dart';
 import 'package:hightouch_events/native_context.dart';
 import 'package:hightouch_events/plugin.dart';
 import 'package:hightouch_events/plugins/session/session_plugin.dart';
+import 'package:hightouch_events/plugins/session/session_state_coordinator.dart';
 import 'package:hightouch_events/state.dart';
 import 'package:hightouch_events/utils/lifecycle/lifecycle.dart';
 
@@ -41,6 +42,46 @@ void main() {
       testClient = client;
       return client;
     }
+
+    test('assigns unique sequential event indices when session reads overlap',
+        () async {
+      var sessionStateReads = 0;
+      final releaseReads = Completer<void>();
+      final sessionStateCoordinator = SessionStateCoordinator(
+        afterRead: (state) async {
+          sessionStateReads++;
+          if (sessionStateReads > 1) {
+            await releaseReads.future;
+          }
+        },
+      );
+      final client = await TestClient.create(
+        clock: clock,
+        store: MemoryStore(),
+        foregroundSessionTimeout: 100000,
+        backgroundSessionTimeout: 100000,
+        sessionStateCoordinator: sessionStateCoordinator,
+      );
+
+      await client.analytics.track('First Event');
+
+      final concurrentTracks = [
+        client.analytics.track('Concurrent 1'),
+        client.analytics.track('Concurrent 2'),
+      ];
+      await Future<void>.delayed(Duration.zero);
+      releaseReads.complete();
+      await Future.wait(concurrentTracks);
+
+      final indices = client.output.events
+          .skip(1)
+          .map((event) =>
+              (event.context!.toJson()['session'] as Map<String, dynamic>)[
+                  'eventIndex'] as int)
+          .toList();
+
+      expect(indices, [1, 2]);
+    });
 
     test('rotates after background timeout using appStateStream when provided',
         () async {
@@ -235,6 +276,7 @@ class TestClient {
     required int backgroundSessionTimeout,
     StreamSubscription<AppStatus> Function(void Function(AppStatus) onData)?
         appStateStream,
+    SessionStateCoordinator? sessionStateCoordinator,
   }) async {
     final analytics = Analytics(
       Configuration(
@@ -259,7 +301,10 @@ class TestClient {
       analytics.removePlugin(plugin);
     }
 
-    final sessionPlugin = SessionPlugin(now: clock.now);
+    final sessionPlugin = SessionPlugin(
+      now: clock.now,
+      sessionStateCoordinator: sessionStateCoordinator,
+    );
     if (foregroundSessionTimeout != 0 || backgroundSessionTimeout != 0) {
       analytics.addPlugin(sessionPlugin);
     }
