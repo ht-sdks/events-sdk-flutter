@@ -547,7 +547,7 @@ class Configuration {
   final String cdnHost;
 
   final RequestFactory? requestFactory;
-  final StreamSubscription<AppStatus> Function()? appStateStream;
+  final AppStateStreamFactory? appStateStream;
   final ErrorHandler? errorHandler;
   final bool? storageJson;
 
@@ -575,6 +575,8 @@ class Configuration {
 
 typedef ErrorHandler = void Function(Exception);
 typedef RequestFactory = Request Function(Request);
+typedef AppStateStreamFactory = StreamSubscription<AppStatus> Function(
+    void Function(AppStatus) onData);
 
 Configuration setFlushPolicies(Configuration a, List<FlushPolicy> flushPolicies) {
   return Configuration(a.writeKey,

@@ -378,7 +378,7 @@ class Analytics with ClientMethods {
         ? lifecycle.listen((nextAppState) {
             _handleAppStateChange(nextAppState);
           })
-        : state.configuration.state.appStateStream!();
+        : state.configuration.state.appStateStream!(_handleAppStateChange);
   }
 
   Future _process(RawEvent event) async {

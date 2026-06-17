@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hightouch_events/analytics.dart';
 import 'package:hightouch_events/analytics_platform_interface.dart';
@@ -39,6 +41,34 @@ void main() {
       testClient = client;
       return client;
     }
+
+    test('rotates after background timeout using appStateStream when provided',
+        () async {
+      final controller = StreamController<AppStatus>.broadcast();
+      final client = await TestClient.create(
+        clock: clock,
+        store: MemoryStore(),
+        foregroundSessionTimeout: 100000,
+        backgroundSessionTimeout: 2000,
+        appStateStream: (onData) => controller.stream.listen(onData),
+      );
+
+      await client.analytics.track('First Event');
+      clock.value = 1500;
+      controller.add(AppStatus.background);
+      await Future<void>.delayed(Duration.zero);
+
+      clock.value = 4000;
+      controller.add(AppStatus.foreground);
+      await Future<void>.delayed(Duration.zero);
+
+      await client.analytics.track('Foreground Event');
+
+      final session = client.output.lastSession;
+      expect(session['sessionId'], 4000);
+      expect(session['sessionIndex'], 1);
+      expect(session['previousSessionId'], 1000);
+    });
 
     test('adds session context to every event', () async {
       final client = await setupClient();
@@ -203,6 +233,8 @@ class TestClient {
     required MemoryStore store,
     required int foregroundSessionTimeout,
     required int backgroundSessionTimeout,
+    StreamSubscription<AppStatus> Function(void Function(AppStatus) onData)?
+        appStateStream,
   }) async {
     final analytics = Analytics(
       Configuration(
@@ -211,6 +243,7 @@ class TestClient {
         foregroundSessionTimeout: foregroundSessionTimeout,
         backgroundSessionTimeout: backgroundSessionTimeout,
         trackApplicationLifecycleEvents: false,
+        appStateStream: appStateStream,
       ),
       store,
     );

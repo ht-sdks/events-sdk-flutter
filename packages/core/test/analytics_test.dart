@@ -37,7 +37,7 @@ void main() {
 
       Analytics analytics = Analytics(
           Configuration("123",
-              trackApplicationLifecycleEvents: false, appStateStream: () => Mocks.streamSubscription()),
+              trackApplicationLifecycleEvents: false, appStateStream: (_) => Mocks.streamSubscription()),
           Mocks.store(),
           httpClient: (_) => httpClient);
       await analytics.init();
@@ -53,7 +53,7 @@ void main() {
 
       Analytics analytics = Analytics(
           Configuration("123",
-              trackApplicationLifecycleEvents: true, appStateStream: () => Mocks.streamSubscription()),
+              trackApplicationLifecycleEvents: true, appStateStream: (_) => Mocks.streamSubscription()),
           Mocks.store(),
           httpClient: (_) => httpClient);
       await analytics.init();
