@@ -29,14 +29,9 @@ class SessionPlugin extends PlatformPlugin with Resetable {
       return;
     }
 
-    final config = analytics.state.configuration.state;
-    _appStateSubscription = config.appStateStream == null
-        ? lifecycle.listen((nextAppState) {
-            unawaited(handleAppStateChange(nextAppState));
-          })
-        : config.appStateStream!((nextAppState) {
-            unawaited(handleAppStateChange(nextAppState));
-          });
+    _appStateSubscription = analytics.state.listenAppState((nextAppState) {
+      unawaited(handleAppStateChange(nextAppState));
+    });
   }
 
   @override

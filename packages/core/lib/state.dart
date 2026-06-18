@@ -5,6 +5,7 @@ import 'package:hightouch_events/event.dart';
 import 'package:hightouch_events/flush_policies/flush_policy.dart';
 import 'package:hightouch_events/logger.dart';
 import 'package:hightouch_events/plugins/session/session_state.dart';
+import 'package:hightouch_events/utils/lifecycle/app_state_stream_multiplexer.dart';
 import 'package:hightouch_events/utils/lifecycle/lifecycle.dart';
 import 'package:flutter/foundation.dart';
 import 'package:state_notifier/state_notifier.dart';
@@ -54,6 +55,24 @@ class StateManager {
       userInfo.ready,
       context.ready
     ]).then((_) => _isReady = true);
+  }
+
+  AppStateStreamMultiplexer? _appStateStreamMultiplexer;
+
+  StreamSubscription<AppStatus> listenAppState(void Function(AppStatus) onData) {
+    final factory = configuration.state.appStateStream;
+    if (factory == null) {
+      return lifecycle.listen(onData);
+    }
+
+    _appStateStreamMultiplexer ??=
+        AppStateStreamMultiplexer.fromFactory(factory);
+    return _appStateStreamMultiplexer!.listen(onData);
+  }
+
+  Future<void> disposeAppStateStreamMultiplexer() async {
+    await _appStateStreamMultiplexer?.dispose();
+    _appStateStreamMultiplexer = null;
   }
 }
 

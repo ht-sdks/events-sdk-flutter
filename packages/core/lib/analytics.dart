@@ -297,6 +297,13 @@ class Analytics with ClientMethods {
       plugin.clear();
     });
 
+    final multiplexerDispose = state.disposeAppStateStreamMultiplexer();
+    if (future != null) {
+      future = Future.wait([future, multiplexerDispose]);
+    } else {
+      future = multiplexerDispose;
+    }
+
     _destroyed = true;
     _isInitialized = false;
     return future ?? Future.value();
@@ -374,11 +381,7 @@ class Analytics with ClientMethods {
 
   void _setupLifecycleEvents() {
     _appStateSubscription?.cancel();
-    _appStateSubscription = state.configuration.state.appStateStream == null
-        ? lifecycle.listen((nextAppState) {
-            _handleAppStateChange(nextAppState);
-          })
-        : state.configuration.state.appStateStream!(_handleAppStateChange);
+    _appStateSubscription = state.listenAppState(_handleAppStateChange);
   }
 
   Future _process(RawEvent event) async {

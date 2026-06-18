@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hightouch_events/analytics.dart';
 import 'package:hightouch_events/analytics_platform_interface.dart';
 import 'package:hightouch_events/event.dart';
@@ -14,12 +15,15 @@ import 'package:hightouch_events/utils/lifecycle/lifecycle.dart';
 import '../helpers/memory_store.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('SessionPlugin', () {
     late TestClock clock;
     TestClient? testClient;
 
     setUp(() {
       AnalyticsPlatform.instance = TestPlatform();
+      SharedPreferences.setMockInitialValues({});
       clock = TestClock(1000);
     });
 
@@ -81,6 +85,40 @@ void main() {
           .toList();
 
       expect(indices, [1, 2]);
+    });
+
+    test(
+        'allows Analytics and SessionPlugin to share a single-subscription appStateStream',
+        () async {
+      final controller = StreamController<AppStatus>();
+      var factoryCallCount = 0;
+
+      final analytics = Analytics(
+        Configuration(
+          'write-key',
+          autoAddHightouchDestination: false,
+          trackApplicationLifecycleEvents: true,
+          appStateStream: (onData) {
+            factoryCallCount++;
+            return controller.stream.listen(onData);
+          },
+        ),
+        MemoryStore(),
+      );
+
+      await analytics.state.ready;
+      await analytics.init();
+
+      expect(factoryCallCount, 1);
+
+      await analytics.track('First Event');
+      controller.add(AppStatus.background);
+      await Future<void>.delayed(Duration.zero);
+
+      final sessionState = await analytics.state.sessionState.state;
+      expect(sessionState?.backgroundedAt, isNotNull);
+
+      await analytics.cleanup();
     });
 
     test('rotates after background timeout using appStateStream when provided',
