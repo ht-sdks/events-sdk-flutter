@@ -319,7 +319,7 @@ class Analytics with ClientMethods {
 
     _destroyed = true;
     _isInitialized = false;
-    return future ?? Future.value();
+    return future;
   }
 
   Future _checkInstalledVersion() async {
