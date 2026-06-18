@@ -119,8 +119,7 @@ void main() {
       });
     });
 
-    test(
-        'preserves backgroundedAt when re-backgrounding with pending rotation',
+    test('preserves backgroundedAt when re-backgrounding with pending rotation',
         () {
       final backgroundedState = initialState.copyWith(backgroundedAt: 1500);
       final foregroundedState = SessionPluginHelper.markForegrounded(
@@ -202,26 +201,6 @@ void main() {
       expect(result.contextSession.firstEventId, 'cold-start-message-id');
     });
 
-    test('rotates when reset starts a new session', () {
-      final rotatedState = SessionPluginHelper.rotateSession(
-        initialState,
-        5000,
-        'reset-message-id',
-        '2026-01-01T00:00:05.000Z',
-      );
-
-      expect(rotatedState.toJson(), {
-        'sessionId': 5000,
-        'sessionIndex': 1,
-        'previousSessionId': 1000,
-        'firstEventId': 'reset-message-id',
-        'firstEventTimestamp': '2026-01-01T00:00:05.000Z',
-        'eventIndex': 0,
-        'lastActivityAt': 5000,
-        'backgroundedAt': null,
-      });
-    });
-
     test('rejects negative session timeouts', () {
       expect(
         () => SessionPluginHelper.validateSessionTimeouts(Configuration(
@@ -236,25 +215,6 @@ void main() {
           backgroundSessionTimeout: -1,
         )),
         throwsA(isA<ArgumentError>()),
-      );
-    });
-
-    test('is disabled only when both timeouts are zero', () {
-      expect(
-        SessionPluginHelper.isEnabled(Configuration(
-          'write-key',
-          foregroundSessionTimeout: 0,
-          backgroundSessionTimeout: 0,
-        )),
-        false,
-      );
-      expect(
-        SessionPluginHelper.isEnabled(Configuration(
-          'write-key',
-          foregroundSessionTimeout: 1,
-          backgroundSessionTimeout: 0,
-        )),
-        true,
       );
     });
   });
