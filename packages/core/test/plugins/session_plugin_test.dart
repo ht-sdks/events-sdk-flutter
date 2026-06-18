@@ -237,6 +237,90 @@ void main() {
       expect(session['previousSessionId'], 1000);
     });
 
+    test('uses rotated session when track follows unawaited reset', () async {
+      final allowResetRotation = Completer<void>();
+      final client = await TestClient.create(
+        clock: clock,
+        store: MemoryStore(),
+        foregroundSessionTimeout: 100000,
+        backgroundSessionTimeout: 100000,
+        sessionStateCoordinator: SessionStateCoordinator(
+          beforeRotateOnReset: () => allowResetRotation.future,
+        ),
+      );
+      testClient = client;
+
+      await client.analytics.track('First Event');
+      clock.value = 5000;
+
+      client.analytics.reset();
+      final trackFuture = client.analytics.track('After Reset');
+
+      await Future<void>.delayed(Duration.zero);
+      allowResetRotation.complete();
+      await trackFuture;
+
+      final session = client.output.lastSession;
+      expect(session['sessionId'], 5000);
+      expect(session['sessionIndex'], 1);
+      expect(session['sessionStart'], true);
+      expect(session['previousSessionId'], 1000);
+    });
+
+    test('uses rotated session when reset follows an in-flight track', () async {
+      final allowResetRotation = Completer<void>();
+      final releaseTrackRead = Completer<void>();
+      final client = await TestClient.create(
+        clock: clock,
+        store: MemoryStore(),
+        foregroundSessionTimeout: 100000,
+        backgroundSessionTimeout: 100000,
+        sessionStateCoordinator: SessionStateCoordinator(
+          beforeRotateOnReset: () => allowResetRotation.future,
+          afterRead: (state) async {
+            if (state?.sessionId == 1000) {
+              await releaseTrackRead.future;
+            }
+          },
+        ),
+      );
+      testClient = client;
+
+      await client.analytics.track('First Event');
+      clock.value = 5000;
+
+      final trackFuture = client.analytics.track('After Reset');
+      await Future<void>.delayed(Duration.zero);
+      client.analytics.reset();
+      releaseTrackRead.complete();
+      allowResetRotation.complete();
+      await trackFuture;
+
+      final session = client.output.lastSession;
+      expect(session['sessionId'], 5000);
+      expect(session['sessionIndex'], 1);
+      expect(session['sessionStart'], true);
+      expect(session['previousSessionId'], 1000);
+    });
+
+    test(
+        'rotates after background timeout when track precedes foreground lifecycle',
+        () async {
+      final client = await setupClient();
+
+      await client.analytics.track('First Event');
+      clock.value = 1500;
+      await client.sessionPlugin.handleAppStateChange(AppStatus.background);
+
+      clock.value = 4000;
+      await client.analytics.track('Foreground Event');
+
+      final session = client.output.lastSession;
+      expect(session['sessionId'], 4000);
+      expect(session['sessionIndex'], 1);
+      expect(session['previousSessionId'], 1000);
+    });
+
     test('rotates when the client resets', () async {
       final client = await setupClient();
 

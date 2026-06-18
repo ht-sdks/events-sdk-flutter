@@ -125,17 +125,17 @@ class SessionPluginHelper {
     bool isAppInBackground = false,
   }) {
     final shouldRotate = state == null ||
+        shouldRotateOnResume(
+          state,
+          now,
+          backgroundSessionTimeout: backgroundSessionTimeout,
+        ) ||
         (!isAppInBackground &&
-            (shouldRotateOnResume(
-                  state,
-                  now,
-                  backgroundSessionTimeout: backgroundSessionTimeout,
-                ) ||
-                shouldRotateOnInactivity(
-                  state,
-                  now,
-                  foregroundSessionTimeout: foregroundSessionTimeout,
-                )));
+            shouldRotateOnInactivity(
+              state,
+              now,
+              foregroundSessionTimeout: foregroundSessionTimeout,
+            ));
 
     final currentState = shouldRotate
         ? rotateSession(state, now, messageId, timestamp)

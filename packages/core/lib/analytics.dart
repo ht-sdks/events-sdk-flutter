@@ -51,6 +51,7 @@ class Analytics with ClientMethods {
     InjectUserInfo(),
     InjectContext(),
   ];
+  Future<void>? _resetInFlight;
 
   void error(Exception exception) {
     reportInternalError(exception, analytics: this);
@@ -188,6 +189,18 @@ class Analytics with ClientMethods {
 
   @override
   Future reset({bool? resetAnonymousId = true}) async {
+    final resetFuture = _performReset(resetAnonymousId: resetAnonymousId);
+    _resetInFlight = resetFuture;
+    try {
+      await resetFuture;
+    } finally {
+      if (_resetInFlight == resetFuture) {
+        _resetInFlight = null;
+      }
+    }
+  }
+
+  Future<void> _performReset({bool? resetAnonymousId = true}) async {
     final anonymousId =
         resetAnonymousId == true ? const Uuid().v4() : (await state.userInfo.state).anonymousId;
 
@@ -385,6 +398,11 @@ class Analytics with ClientMethods {
   }
 
   Future _process(RawEvent event) async {
+    final resetInFlight = _resetInFlight;
+    if (resetInFlight != null) {
+      await resetInFlight;
+    }
+
     applyRawEventData(event);
     if (state.isReady) {
       _flushPolicyExecuter.notify(event);

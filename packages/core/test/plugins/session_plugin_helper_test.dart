@@ -159,6 +159,32 @@ void main() {
     });
 
     test(
+        'rotates when background timeout exceeded before lifecycle marks foreground',
+        () {
+      final backgroundedState = initialState.copyWith(backgroundedAt: 1500);
+
+      final result = SessionPluginHelper.processEvent(
+        state: backgroundedState,
+        now: 4000,
+        messageId: 'foreground-message-id',
+        timestamp: '2026-01-01T00:00:04.000Z',
+        foregroundSessionTimeout: 1800000,
+        backgroundSessionTimeout: 2000,
+        isAppInBackground: true,
+      );
+
+      expect(result.contextSession.toJson(), {
+        'sessionId': 4000,
+        'sessionIndex': 1,
+        'sessionStart': true,
+        'eventIndex': 0,
+        'previousSessionId': 1000,
+        'firstEventId': 'foreground-message-id',
+        'firstEventTimestamp': '2026-01-01T00:00:04.000Z',
+      });
+    });
+
+    test(
         'rotates on cold start when persisted background duration exceeded timeout',
         () {
       final result = SessionPluginHelper.processEvent(
