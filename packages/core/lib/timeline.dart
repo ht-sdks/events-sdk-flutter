@@ -101,10 +101,17 @@ class Timeline {
         if (result != null) {
           try {
             final pluginResult = plugin.execute(result);
-            // Each destination is independent from each other, so we don't roll over changes caused internally in each one of their processing
-            if (type != PluginType.destination) {
-              result = await pluginResult;
-            }
+              // Each destination is independent from each other, so we don't                                                                                 
+              // roll over changes caused internally in each one of their                                                                                   
+              // processing. We still await the future so that track() does not                                                                             
+              // resolve before the destination has queued the event — without                                                                              
+              // this, a flush() called immediately after track() may miss the                                                                                
+              // event because it has not yet reached the QueueFlushingPlugin.                                                                                
+              if (type != PluginType.destination) {                                                                                                           
+                result = await pluginResult;                                                                                                                  
+              } else {                                                                                                                                      
+                await pluginResult;                                                                                                                           
+              }     
           } catch (error) {
             reportInternalError(
                 PluginError("Destination ${(plugin as DestinationPlugin).key} failed to execute", error),
