@@ -42,7 +42,10 @@ class Timeline {
 
     plugin.analytics?.state.integrations.addListener((newIntegrations) {
       plugin.update(
-          newIntegrations, hasInitialSettings ? ContextUpdateType.refresh : ContextUpdateType.initial);
+          newIntegrations,
+          hasInitialSettings
+              ? ContextUpdateType.refresh
+              : ContextUpdateType.initial);
       hasInitialSettings = true;
     });
   }
@@ -75,7 +78,8 @@ class Timeline {
     }
 
     // .enrichment here is akin to source middleware in the old analytics-ios.
-    final enrichmentResult = await applyPlugins(PluginType.enrichment, beforeResult);
+    final enrichmentResult =
+        await applyPlugins(PluginType.enrichment, beforeResult);
 
     if (enrichmentResult == null) {
       return null;
@@ -101,23 +105,26 @@ class Timeline {
         if (result != null) {
           try {
             final pluginResult = plugin.execute(result);
-              // Each destination is independent from each other, so we don't                                                                                 
-              // roll over changes caused internally in each one of their                                                                                   
-              // processing. We still await the future so that track() does not                                                                             
-              // resolve before the destination has queued the event — without                                                                              
-              // this, a flush() called immediately after track() may miss the                                                                                
-              // event because it has not yet reached the QueueFlushingPlugin.                                                                                
-              if (type != PluginType.destination) {                                                                                                           
-                result = await pluginResult;                                                                                                                  
-              } else {                                                                                                                                      
-                await pluginResult;                                                                                                                           
-              }     
+            // Each destination is independent from each other, so we don't
+            // roll over changes caused internally in each one of their
+            // processing. We still await the future so that track() does not
+            // resolve before the destination has queued the event — without
+            // this, a flush() called immediately after track() may miss the
+            // event because it has not yet reached the QueueFlushingPlugin.
+            if (type != PluginType.destination) {
+              result = await pluginResult;
+            } else {
+              await pluginResult;
+            }
           } catch (error) {
             reportInternalError(
-                PluginError("Destination ${(plugin as DestinationPlugin).key} failed to execute", error),
+                PluginError(
+                    "Destination ${(plugin as DestinationPlugin).key} failed to execute",
+                    error),
                 analytics: plugin.analytics);
             if (plugin.type == PluginType.destination) {
-              log("Destination ${plugin.key} failed to execute: $error", kind: LogFilterKind.warning);
+              log("Destination ${plugin.key} failed to execute: $error",
+                  kind: LogFilterKind.warning);
             }
           }
         }
