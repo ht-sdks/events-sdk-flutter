@@ -1,3 +1,7 @@
+## 1.1.1
+
+- Fixed an issue where an event tracked immediately before `flush()` could be missed, because destination plugin execution was not awaited before `track()` resolved.
+
 ## 1.1.0
 
 - Added session tracking via `SessionPlugin`, enriching events with a `session` context object and top-level `sessionId` and `sessionStart` fields for parity with the JS SDK.
