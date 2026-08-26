@@ -112,7 +112,7 @@ The [track](https://hightouch.com/docs/events/event-spec#track-events) method is
 Method signature:
 
 ```dart
-Future track(String event: string, {Map<String, dynamic>? properties, Map<String, dynamic>? context});
+Future track(String event, {Map<String, dynamic>? properties, Map<String, dynamic>? context});
 ```
 
 Example usage:
@@ -131,7 +131,7 @@ The [screen](https://hightouch.com/docs/events/event-spec#screen-events) call le
 Method signature:
 
 ```dart
-Future screen(String name: string, {Map<String, dynamic>? properties, Map<String, dynamic>? context});
+Future screen(String name, {Map<String, dynamic>? properties, Map<String, dynamic>? context});
 ```
 
 Example usage:
