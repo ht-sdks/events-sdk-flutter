@@ -1,3 +1,7 @@
+## 1.2.0
+
+- Added optional per-call `context` to `track`, `screen`, `identify`, `group`, and `alias`. Nested maps are deep-merged onto that event's context.
+
 ## 1.1.1
 
 - Fixed an issue where an event tracked immediately before `flush()` could be missed, because destination plugin execution was not awaited before `track()` resolved.

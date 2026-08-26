@@ -230,37 +230,39 @@ class Analytics with ClientMethods {
   }
 
   @override
-  Future track(String event, {Map<String, dynamic>? properties}) async {
-    await _process(TrackEvent(event, properties: properties ?? {}));
+  Future track(String event, {Map<String, dynamic>? properties, Map<String, dynamic>? context}) async {
+    await _process(TrackEvent(event, properties: properties ?? {}), context: context);
   }
 
   @override
-  Future screen(String name, {Map<String, dynamic>? properties}) async {
+  Future screen(String name, {Map<String, dynamic>? properties, Map<String, dynamic>? context}) async {
     final event = ScreenEvent(name, properties: properties ?? {});
 
-    await _process(event);
+    await _process(event, context: context);
   }
 
   @override
-  Future identify({String? userId, UserTraits? userTraits}) async {
+  Future identify({String? userId, UserTraits? userTraits, Map<String, dynamic>? context}) async {
     final event = IdentifyEvent(userId: userId, traits: userTraits);
 
-    await _process(event);
+    await _process(event, context: context);
   }
 
   @override
-  Future group(String groupId, {GroupTraits? groupTraits}) async {
+  Future group(String groupId, {GroupTraits? groupTraits, Map<String, dynamic>? context}) async {
     final event = GroupEvent(groupId, traits: groupTraits);
 
-    await _process(event);
+    await _process(event, context: context);
   }
 
   @override
-  Future alias(String newUserId) async {
+  Future alias(String newUserId, {Map<String, dynamic>? context}) async {
+    // Copy before any await so overlapping alias() calls cannot share one overlay.
+    final overlay = context == null ? null : deepMergeMaps({}, context);
     final userInfo = await state.userInfo.state;
     final event = AliasEvent(userInfo.userId ?? userInfo.anonymousId, userId: newUserId);
 
-    await _process(event);
+    await _process(event, context: overlay);
   }
 
   Future init() async {
@@ -397,7 +399,11 @@ class Analytics with ClientMethods {
     _appStateSubscription = state.listenAppState(_handleAppStateChange);
   }
 
-  Future _process(RawEvent event) async {
+  Future _process(RawEvent event, {Map<String, dynamic>? context}) async {
+    if (context != null) {
+      event.contextOverlay = deepMergeMaps({}, context);
+    }
+
     final resetInFlight = _resetInFlight;
     if (resetInFlight != null) {
       await resetInFlight;

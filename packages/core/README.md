@@ -112,7 +112,7 @@ The [track](https://hightouch.com/docs/events/event-spec#track-events) method is
 Method signature:
 
 ```dart
-Future track(String event: string, {Map<String, dynamic>? properties});
+Future track(String event: string, {Map<String, dynamic>? properties, Map<String, dynamic>? context});
 ```
 
 Example usage:
@@ -131,7 +131,7 @@ The [screen](https://hightouch.com/docs/events/event-spec#screen-events) call le
 Method signature:
 
 ```dart
-Future screen(String name: string, {Map<String, dynamic>? properties});
+Future screen(String name: string, {Map<String, dynamic>? properties, Map<String, dynamic>? context});
 ```
 
 Example usage:
@@ -151,7 +151,7 @@ The [identify](https://hightouch.com/docs/events/event-spec#identify-events) cal
 Method signature:
 
 ```dart
-Future identify({String? userId, UserTraits? userTraits});
+Future identify({String? userId, UserTraits? userTraits, Map<String, dynamic>? context});
 ```
 
 Example usage:
@@ -173,7 +173,7 @@ The [group](https://hightouch.com/docs/events/event-spec#group-events) API call 
 Method signature:
 
 ```dart
-Future group(String groupId, {GroupTraits? groupTraits});
+Future group(String groupId, {GroupTraits? groupTraits, Map<String, dynamic>? context});
 ```
 
 Example usage:
@@ -194,7 +194,7 @@ The [alias](https://hightouch.com/docs/events/event-spec#alias-events) method is
 Method signature:
 
 ```dart
-Future alias(String newUserId);
+Future alias(String newUserId, {Map<String, dynamic>? context});
 ```
 
 Example usage:

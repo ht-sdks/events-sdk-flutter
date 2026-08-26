@@ -14,7 +14,13 @@ class InjectContext extends PlatformPlugin {
     final context = await analytics!.state.context.state;
     context!.instanceId = instanceId;
     context.library = ContextLibrary("events-sdk-flutter", Analytics.version());
-    event.context = context;
+
+    // Clone per event so overlapping calls cannot mutate a shared Context.
+    final contextJson = context.toJson();
+    final overlay = event.contextOverlay;
+    event.context = Context.fromJson(
+        overlay == null ? contextJson : deepMergeMaps(contextJson, overlay));
+    event.contextOverlay = null;
     return event;
   }
 }

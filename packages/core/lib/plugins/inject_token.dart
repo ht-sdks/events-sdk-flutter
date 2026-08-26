@@ -11,7 +11,12 @@ class InjectToken extends PlatformPlugin {
     // We need to get the Context in a concurrency safe mode to permit changes to make it in before we retrieve it
     final context = await analytics!.state.context.state;
     context!.device.token = token;
-    event.context = context;
+    final eventContext = event.context;
+    if (eventContext != null) {
+      eventContext.device.token = token;
+    } else {
+      event.context = context;
+    }
     return event;
   }
 }

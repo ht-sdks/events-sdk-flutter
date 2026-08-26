@@ -80,6 +80,22 @@ void main() {
     });
   });
 
+  group("deepMergeMaps", () {
+    test("merges nested maps without replacing siblings", () {
+      final merged = deepMergeMaps(
+        {
+          "protocols": {"schemaVersion": "v0", "keep": true},
+        },
+        {
+          "protocols": {"schemaVersion": "v1"},
+        },
+      );
+
+      expect(merged["protocols"]["schemaVersion"], "v1");
+      expect(merged["protocols"]["keep"], true);
+    });
+  });
+
   group("RawEvent timestamps", () {
     test("It fills missing timestamps with a UTC ISO-8601 string", () {
       final event = TrackEvent("UTC Timestamp");

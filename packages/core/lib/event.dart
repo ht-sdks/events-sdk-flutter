@@ -50,6 +50,10 @@ abstract class RawEvent with JSONSerialisable {
 
   Context? context;
 
+  /// Per-call context overlay. Deep-merged during processing; not serialized.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  Map<String, dynamic>? contextOverlay;
+
   Map<String, dynamic>? integrations;
 
   @JsonKey(name: "_metadata")
@@ -604,4 +608,38 @@ ContextDevice mergeContextDevice(ContextDevice a, ContextDevice b) {
 
 ContextScreen mergeContextScreen(ContextScreen a, ContextScreen b) {
   return ContextScreen(a.height, b.width, density: a.density ?? b.density);
+}
+
+/// Deep-merges [overlay] onto [base]. Nested maps are merged; other values replace.
+Map<String, dynamic> deepMergeMaps(Map<String, dynamic> base, Map<String, dynamic> overlay) {
+  final result = <String, dynamic>{};
+  for (final entry in base.entries) {
+    result[entry.key] = _deepCloneMergeValue(entry.value);
+  }
+  for (final entry in overlay.entries) {
+    final existing = result[entry.key];
+    if (existing is Map && entry.value is Map) {
+      result[entry.key] = deepMergeMaps(_stringKeyedMap(existing), _stringKeyedMap(entry.value as Map));
+    } else {
+      result[entry.key] = _deepCloneMergeValue(entry.value);
+    }
+  }
+  return result;
+}
+
+Map<String, dynamic> _stringKeyedMap(Map map) {
+  if (map is Map<String, dynamic>) {
+    return Map<String, dynamic>.from(map);
+  }
+  return Map<String, dynamic>.from(map);
+}
+
+dynamic _deepCloneMergeValue(dynamic value) {
+  if (value is Map) {
+    return deepMergeMaps({}, _stringKeyedMap(value));
+  }
+  if (value is List) {
+    return value.map(_deepCloneMergeValue).toList();
+  }
+  return value;
 }
