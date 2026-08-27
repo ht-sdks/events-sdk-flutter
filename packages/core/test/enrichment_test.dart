@@ -95,6 +95,18 @@ void main() {
     expect(context['library'], isNotNull);
   });
 
+  test('enrichment closure survives a plugin that returns a fresh event',
+      () async {
+    analytics.addPlugin(_ReplaceEventPlugin());
+
+    await analytics.track('TrackReplaced',
+        enrichment: _stampSchemaVersion('v9'));
+
+    expect(output.events, hasLength(1));
+    expect(_schemaVersion(output.events.single), 'v9');
+    expect(output.events.single.context!.toJson()['library'], isNotNull);
+  });
+
   test('processed events serialize without any enrichment key', () async {
     await analytics.track('TrackNoEnrichment');
 
@@ -163,6 +175,25 @@ class CapturePlugin extends PlatformPlugin {
   Future<RawEvent?> execute(RawEvent event) async {
     events.add(event);
     return event;
+  }
+}
+
+/// Returns a brand-new event instance without carrying over the (non-JSON)
+/// `enrichment` field, simulating plugins that rebuild events, e.g. via a
+/// toJson/fromJson round trip.
+class _ReplaceEventPlugin extends PlatformPlugin {
+  _ReplaceEventPlugin() : super(PluginType.enrichment);
+
+  @override
+  Future<RawEvent?> execute(RawEvent event) async {
+    final track = event as TrackEvent;
+    return TrackEvent(track.event, properties: track.properties)
+      ..anonymousId = track.anonymousId
+      ..messageId = track.messageId
+      ..userId = track.userId
+      ..timestamp = track.timestamp
+      ..context = track.context
+      ..integrations = track.integrations;
   }
 }
 
