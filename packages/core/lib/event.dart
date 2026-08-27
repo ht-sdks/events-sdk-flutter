@@ -8,6 +8,13 @@ mixin JSONSerialisable {
   Map<String, dynamic> toJson();
 }
 
+/// A per-call closure that can modify an event during processing.
+///
+/// It runs after enrichment-phase plugins (i.e. once platform context has
+/// been stamped on the event) and before destination plugins. Its return
+/// value is used verbatim; any merge semantics belong inside the closure.
+typedef EnrichmentClosure = RawEvent Function(RawEvent event);
+
 enum EventType {
   track('track'),
   identify('identify'),
@@ -55,6 +62,12 @@ abstract class RawEvent with JSONSerialisable {
   @JsonKey(name: "_metadata")
   DestinationMetadata? metadata;
 
+  /// Optional per-call [EnrichmentClosure]. Closures cannot be serialized,
+  /// so this field is excluded from [toJson]/`fromJson` and does not survive
+  /// persistence; it is only preserved for in-memory processing.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  EnrichmentClosure? enrichment;
+
   RawEvent(this.type, {this.anonymousId, this.userId});
 }
 
@@ -85,7 +98,7 @@ class TrackEvent extends RawEvent {
 @JsonSerializable(explicitToJson: true)
 class IdentifyEvent extends RawEvent {
   UserTraits? traits;
-  IdentifyEvent({this.traits, String? userId}) : super(EventType.identify, userId: userId);
+  IdentifyEvent({this.traits, super.userId}) : super(EventType.identify);
 
   factory IdentifyEvent.fromJson(Map<String, dynamic> json) => _$IdentifyEventFromJson(json);
   @override
@@ -108,7 +121,7 @@ class GroupEvent extends RawEvent {
 class AliasEvent extends RawEvent {
   String previousId;
 
-  AliasEvent(this.previousId, {String? userId}) : super(EventType.alias, userId: userId);
+  AliasEvent(this.previousId, {super.userId}) : super(EventType.alias);
 
   factory AliasEvent.fromJson(Map<String, dynamic> json) => _$AliasEventFromJson(json);
   @override

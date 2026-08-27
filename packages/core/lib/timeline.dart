@@ -66,6 +66,9 @@ class Timeline {
   }
 
   Future<RawEvent?> process(RawEvent incomingEvent) async {
+    // Deliberate divergence from the Segment SDK family: capture the per-call enrichment up front so it survives plugins that return a fresh event (siblings drop it).
+    final enrichment = incomingEvent.enrichment;
+
     // apply .before first, ensuring all .before phases for all events triggered
     // in a synchronous block are finished before moving onto the enrichment phase
 
@@ -85,13 +88,19 @@ class Timeline {
       return null;
     }
 
+    // Apply the per-call enrichment closure (if any) after enrichment-phase
+    // plugins have run, so platform context is already stamped on the event.
+    // The closure's return value is used verbatim.
+    final enrichedResult =
+        enrichment != null ? enrichment(enrichmentResult) : enrichmentResult;
+
     // once the event enters a destination, we don't want
     // to know about changes that happen there. those changes
     // are to only be received by the destination.
-    await applyPlugins(PluginType.destination, enrichmentResult);
+    await applyPlugins(PluginType.destination, enrichedResult);
 
     // apply .after plugins ...
-    final afterResult = await applyPlugins(PluginType.after, enrichmentResult);
+    final afterResult = await applyPlugins(PluginType.after, enrichedResult);
 
     return afterResult;
   }

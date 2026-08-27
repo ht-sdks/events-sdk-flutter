@@ -1,3 +1,7 @@
+## 1.2.0
+
+- Added an optional per-call `enrichment` closure (`RawEvent Function(RawEvent)`) to `track`, `screen`, `identify`, `group`, and `alias`, mirroring the per-call enrichment API of the sibling SDKs. The closure runs after platform context is stamped and before destinations; its return value is used verbatim.
+
 ## 1.1.1
 
 - Fixed an issue where an event tracked immediately before `flush()` could be missed, because destination plugin execution was not awaited before `track()` resolved.
