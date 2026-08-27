@@ -211,9 +211,27 @@ Example usage:
 
 ```dart
 analytics.track("View Product", enrichment: (event) {
+  // Copy the shared platform Context before writing to it: the SDK stamps the
+  // same Context instance onto every event, so in-place writes would leak to
+  // later events. Merge semantics belong inside the closure.
   final context = event.context;
   if (context != null) {
-    context.custom["protocols"] = {"schemaVersion": "1.2.0"};
+    event.context = Context(
+      context.app,
+      context.device,
+      context.library,
+      context.locale,
+      context.network,
+      context.os,
+      context.screen,
+      context.timezone,
+      context.traits,
+      instanceId: context.instanceId,
+      custom: {
+        ...context.custom,
+        "protocols": {"schemaVersion": "1.2.0"},
+      },
+    );
   }
   return event;
 });
