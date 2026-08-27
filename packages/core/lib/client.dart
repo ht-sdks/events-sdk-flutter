@@ -36,11 +36,11 @@ Analytics createClient(Configuration configuration) {
 }
 
 mixin ClientMethods {
-  Future track(String event, {Map<String, dynamic>? properties});
-  Future screen(String name, {Map<String, dynamic>? properties});
-  Future identify({String? userId, UserTraits? userTraits});
-  Future group(String groupId, {GroupTraits? groupTraits});
-  Future alias(String newUserId);
+  Future track(String event, {Map<String, dynamic>? properties, EnrichmentClosure? enrichment});
+  Future screen(String name, {Map<String, dynamic>? properties, EnrichmentClosure? enrichment});
+  Future identify({String? userId, UserTraits? userTraits, EnrichmentClosure? enrichment});
+  Future group(String groupId, {GroupTraits? groupTraits, EnrichmentClosure? enrichment});
+  Future alias(String newUserId, {EnrichmentClosure? enrichment});
   Future flush();
   Future reset({bool? resetAnonymousId});
 }

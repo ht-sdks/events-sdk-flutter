@@ -112,7 +112,7 @@ The [track](https://hightouch.com/docs/events/event-spec#track-events) method is
 Method signature:
 
 ```dart
-Future track(String event: string, {Map<String, dynamic>? properties});
+Future track(String event, {Map<String, dynamic>? properties, EnrichmentClosure? enrichment});
 ```
 
 Example usage:
@@ -131,7 +131,7 @@ The [screen](https://hightouch.com/docs/events/event-spec#screen-events) call le
 Method signature:
 
 ```dart
-Future screen(String name: string, {Map<String, dynamic>? properties});
+Future screen(String name, {Map<String, dynamic>? properties, EnrichmentClosure? enrichment});
 ```
 
 Example usage:
@@ -151,7 +151,7 @@ The [identify](https://hightouch.com/docs/events/event-spec#identify-events) cal
 Method signature:
 
 ```dart
-Future identify({String? userId, UserTraits? userTraits});
+Future identify({String? userId, UserTraits? userTraits, EnrichmentClosure? enrichment});
 ```
 
 Example usage:
@@ -173,7 +173,7 @@ The [group](https://hightouch.com/docs/events/event-spec#group-events) API call 
 Method signature:
 
 ```dart
-Future group(String groupId, {GroupTraits? groupTraits});
+Future group(String groupId, {GroupTraits? groupTraits, EnrichmentClosure? enrichment});
 ```
 
 Example usage:
@@ -194,7 +194,7 @@ The [alias](https://hightouch.com/docs/events/event-spec#alias-events) method is
 Method signature:
 
 ```dart
-Future alias(String newUserId);
+Future alias(String newUserId, {EnrichmentClosure? enrichment});
 ```
 
 Example usage:
@@ -202,6 +202,24 @@ Example usage:
 ```dart
 analytics.alias("user-123");
 ```
+
+### Per-call enrichment
+
+`track`, `screen`, `identify`, `group`, and `alias` accept an optional `enrichment` closure (`RawEvent Function(RawEvent)`), mirroring the per-call enrichment API of the sibling SDKs. The closure runs in the event pipeline after platform context has been stamped onto the event and before destinations, and its return value is used verbatim — any merge semantics belong inside the closure.
+
+Example usage:
+
+```dart
+analytics.track("View Product", enrichment: (event) {
+  final context = event.context;
+  if (context != null) {
+    context.custom["protocols"] = {"schemaVersion": "1.2.0"};
+  }
+  return event;
+});
+```
+
+Note: because closures cannot be serialized, an enrichment closure does not survive persistence of pending events across an app restart; events processed in the same session apply it as expected.
 
 ### Reset
 

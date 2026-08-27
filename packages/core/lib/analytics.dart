@@ -230,37 +230,37 @@ class Analytics with ClientMethods {
   }
 
   @override
-  Future track(String event, {Map<String, dynamic>? properties}) async {
-    await _process(TrackEvent(event, properties: properties ?? {}));
+  Future track(String event, {Map<String, dynamic>? properties, EnrichmentClosure? enrichment}) async {
+    await _process(TrackEvent(event, properties: properties ?? {}), enrichment: enrichment);
   }
 
   @override
-  Future screen(String name, {Map<String, dynamic>? properties}) async {
+  Future screen(String name, {Map<String, dynamic>? properties, EnrichmentClosure? enrichment}) async {
     final event = ScreenEvent(name, properties: properties ?? {});
 
-    await _process(event);
+    await _process(event, enrichment: enrichment);
   }
 
   @override
-  Future identify({String? userId, UserTraits? userTraits}) async {
+  Future identify({String? userId, UserTraits? userTraits, EnrichmentClosure? enrichment}) async {
     final event = IdentifyEvent(userId: userId, traits: userTraits);
 
-    await _process(event);
+    await _process(event, enrichment: enrichment);
   }
 
   @override
-  Future group(String groupId, {GroupTraits? groupTraits}) async {
+  Future group(String groupId, {GroupTraits? groupTraits, EnrichmentClosure? enrichment}) async {
     final event = GroupEvent(groupId, traits: groupTraits);
 
-    await _process(event);
+    await _process(event, enrichment: enrichment);
   }
 
   @override
-  Future alias(String newUserId) async {
+  Future alias(String newUserId, {EnrichmentClosure? enrichment}) async {
     final userInfo = await state.userInfo.state;
     final event = AliasEvent(userInfo.userId ?? userInfo.anonymousId, userId: newUserId);
 
-    await _process(event);
+    await _process(event, enrichment: enrichment);
   }
 
   Future init() async {
@@ -397,13 +397,16 @@ class Analytics with ClientMethods {
     _appStateSubscription = state.listenAppState(_handleAppStateChange);
   }
 
-  Future _process(RawEvent event) async {
+  Future _process(RawEvent event, {EnrichmentClosure? enrichment}) async {
     final resetInFlight = _resetInFlight;
     if (resetInFlight != null) {
       await resetInFlight;
     }
 
     applyRawEventData(event);
+    if (enrichment != null) {
+      event.enrichment = enrichment;
+    }
     if (state.isReady) {
       _flushPolicyExecuter.notify(event);
       return _timeline.process(event);
