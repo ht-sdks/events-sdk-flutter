@@ -98,7 +98,7 @@ class TrackEvent extends RawEvent {
 @JsonSerializable(explicitToJson: true)
 class IdentifyEvent extends RawEvent {
   UserTraits? traits;
-  IdentifyEvent({this.traits, String? userId}) : super(EventType.identify, userId: userId);
+  IdentifyEvent({this.traits, super.userId}) : super(EventType.identify);
 
   factory IdentifyEvent.fromJson(Map<String, dynamic> json) => _$IdentifyEventFromJson(json);
   @override
@@ -121,7 +121,7 @@ class GroupEvent extends RawEvent {
 class AliasEvent extends RawEvent {
   String previousId;
 
-  AliasEvent(this.previousId, {String? userId}) : super(EventType.alias, userId: userId);
+  AliasEvent(this.previousId, {super.userId}) : super(EventType.alias);
 
   factory AliasEvent.fromJson(Map<String, dynamic> json) => _$AliasEventFromJson(json);
   @override
