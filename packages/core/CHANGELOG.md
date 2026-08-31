@@ -1,3 +1,7 @@
+## 1.3.0
+
+- Added Swift Package Manager support for iOS and macOS, per [Flutter's plugin-author migration guide](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-plugin-authors). CocoaPods remains fully supported; native sources moved to `ios/hightouch_events/Sources/hightouch_events/` and `macos/hightouch_events/Sources/hightouch_events/`, and the podspecs now point at the new paths.
+
 ## 1.2.0
 
 - Added an optional per-call `enrichment` closure (`RawEvent Function(RawEvent)`) to `track`, `screen`, `identify`, `group`, and `alias`, mirroring the per-call enrichment API of the sibling SDKs. The closure runs after platform context is stamped and before destinations; its return value is used verbatim.

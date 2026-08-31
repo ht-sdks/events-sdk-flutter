@@ -13,7 +13,7 @@ The hassle-free way to add Hightouch Events to your Flutter app.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Hightouch' => 'support@hightouch.io' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'hightouch_events/Sources/hightouch_events/**/*.swift'
   s.dependency 'Flutter'
   s.platform = :ios, '9.0'
 
