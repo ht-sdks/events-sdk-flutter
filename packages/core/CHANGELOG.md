@@ -1,3 +1,8 @@
+## 1.2.1
+
+- Upgraded the Android Kotlin Gradle plugin to 2.4.20-RC3 to fix [CVE-2026-53914](https://github.com/advisories/GHSA-r937-wjx7-w2jp) (unsafe deserialization in Kotlin build cache metadata). 2.4.20 stable is not published yet; 2.4.20-RC3 is the latest patched release.
+- Raised the Android Gradle Plugin to 8.7.3, which is required for Kotlin 2.4.x.
+
 ## 1.2.0
 
 - Added an optional per-call `enrichment` closure (`RawEvent Function(RawEvent)`) to `track`, `screen`, `identify`, `group`, and `alias`, mirroring the per-call enrichment API of the sibling SDKs. The closure runs after platform context is stamped and before destinations; its return value is used verbatim.
