@@ -14,7 +14,7 @@ Hightouch Events Flutter MacOS plugin
   s.author           = { 'Hightouch' => 'support@hightouch.io' }
 
   s.source           = { :path => '.' }
-  s.source_files     = 'Classes/**/*'
+  s.source_files     = 'hightouch_events/Sources/hightouch_events/**/*.swift'
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx, '10.11'

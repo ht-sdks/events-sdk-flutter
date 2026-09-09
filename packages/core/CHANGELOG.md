@@ -1,3 +1,7 @@
+## 1.3.0
+
+- Added Swift Package Manager support for iOS and macOS, per [Flutter's plugin-author migration guide](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-plugin-authors). CocoaPods remains fully supported; native sources moved to `ios/hightouch_events/Sources/hightouch_events/` and `macos/hightouch_events/Sources/hightouch_events/`, and the podspecs now point at the new paths.
+
 ## 1.2.1
 
 - Upgraded the Android Kotlin Gradle plugin to 2.4.20-RC3 to fix [CVE-2026-53914](https://github.com/advisories/GHSA-r937-wjx7-w2jp) (unsafe deserialization in Kotlin build cache metadata). 2.4.20 stable is not published yet; 2.4.20-RC3 is the latest patched release.
