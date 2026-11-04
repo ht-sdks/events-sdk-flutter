@@ -1,3 +1,7 @@
+## 1.3.1
+
+- Fixed an unhandled `FileSystemException` (e.g. `No space left on device`, errno 28) when persisting state. Write failures are now reported to the configured error handler as `StorageUnableToWrite`, and the file lock and handle are always released when a write fails.
+
 ## 1.3.0
 
 - Added Swift Package Manager support for iOS and macOS, per [Flutter's plugin-author migration guide](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-plugin-authors). CocoaPods remains fully supported; native sources moved to `ios/hightouch_events/Sources/hightouch_events/` and `macos/hightouch_events/Sources/hightouch_events/`, and the podspecs now point at the new paths.

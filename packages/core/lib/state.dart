@@ -126,6 +126,19 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
   @protected
   T fromJson(Map<String, dynamic> json);
 
+  /// Persists [value], routing any write failure (e.g. disk full) to the error
+  /// handler instead of leaving it as an unhandled async error.
+  Future _persist(T value) {
+    return _store.setPersisted(_key, toJson(value)).catchError((Object error) {
+      final wrapped = StorageUnableToWrite("$_key: $error");
+      if (_errorHandler != null) {
+        _errorHandler!(wrapped);
+      } else {
+        reportInternalError(wrapped);
+      }
+    }).whenComplete(_whenPersistenceComplete);
+  }
+
   void _whenPersistenceComplete() {
     if (_hasUpdated) {
       _hasUpdated = false;
@@ -137,7 +150,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
           reportInternalError(InconsistentStateError(_key));
         }
       } else {}
-      _persistance = _store.setPersisted(_key, toJson(state as T)).whenComplete(_whenPersistenceComplete);
+      _persistance = _persist(state as T);
     } else {
       _persistance = null;
     }
@@ -192,9 +205,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
       if (_persistance != null) {
         _hasUpdated = true;
       } else {
-        _persistance = storageJson
-            ? _store.setPersisted(_key, toJson(state)).whenComplete(_whenPersistenceComplete)
-            : null;
+        _persistance = storageJson ? _persist(state) : null;
       }
     });
     _store.ready.then<void>((_) async {
@@ -204,7 +215,9 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
       } on FormatException catch (e) {
         // File corruption should be less likely with removal of async code in writes
         // Existing corrupted files are cleaned up here without failing initialization
-        _store.setPersisted(_key, {});
+        _store.setPersisted(_key, {}).catchError((Object error) {
+          errorHandler(StorageUnableToWrite("$_key: $error"));
+        });
         log("Clean file $_key with format error", kind: LogFilterKind.warning);
         final wrappedError = ErrorLoadingStorage(e);
         errorHandler(wrappedError);
@@ -213,9 +226,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
 
       if (rawV == null) {
         final init = await _initialiser();
-        _persistance = storageJson
-            ? _store.setPersisted(_key, toJson(init)).whenComplete(_whenPersistenceComplete)
-            : null;
+        _persistance = storageJson ? _persist(init) : null;
         _notifier.nonNullState = init;
         v = init;
       } else {
