@@ -1,13 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:hightouch_events/errors.dart';
 import 'package:hightouch_events/utils/store/store.dart';
 import 'package:path_provider/path_provider.dart';
 
 class StoreImpl with Store {
+  StoreImpl({@visibleForTesting Future<RandomAccessFile?> Function(String fileKey, {bool create})? fileOpener})
+      : _fileOpener = fileOpener;
+
+  final Future<RandomAccessFile?> Function(String fileKey, {bool create})? _fileOpener;
+
   @override
   Future<Map<String, dynamic>?> getPersisted(String key) {
     return _readFile(key);
@@ -72,6 +77,10 @@ class StoreImpl with Store {
   }
 
   Future<RandomAccessFile?> _getFile(String fileKey, {bool create = false}) async {
+    final opener = _fileOpener;
+    if (opener != null) {
+      return opener(fileKey, create: create);
+    }
     final file = File(await _fileName(fileKey));
 
     if (await file.exists()) {

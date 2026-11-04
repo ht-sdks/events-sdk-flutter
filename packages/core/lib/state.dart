@@ -130,12 +130,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
   /// handler instead of leaving it as an unhandled async error.
   Future _persist(T value) {
     return _store.setPersisted(_key, toJson(value)).catchError((Object error) {
-      final wrapped = StorageUnableToWrite("$_key: $error");
-      if (_errorHandler != null) {
-        _errorHandler!(wrapped);
-      } else {
-        reportInternalError(wrapped);
-      }
+      _errorHandler?.call(StorageUnableToWrite("$_key: $error"));
     }).whenComplete(_whenPersistenceComplete);
   }
 
