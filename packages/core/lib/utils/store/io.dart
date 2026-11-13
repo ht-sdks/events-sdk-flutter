@@ -1,13 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:hightouch_events/errors.dart';
 import 'package:hightouch_events/utils/store/store.dart';
 import 'package:path_provider/path_provider.dart';
 
 class StoreImpl with Store {
+  StoreImpl({@visibleForTesting Future<RandomAccessFile?> Function(String fileKey, {bool create})? fileOpener})
+      : _fileOpener = fileOpener;
+
+  final Future<RandomAccessFile?> Function(String fileKey, {bool create})? _fileOpener;
+
   @override
   Future<Map<String, dynamic>?> getPersisted(String key) {
     return _readFile(key);
@@ -26,12 +31,24 @@ class StoreImpl with Store {
     final serialized = json.encode(data);
     final buffer = utf8.encode(serialized);
 
-    file.lockSync(FileLock.blockingExclusive);
-    file.setPositionSync(0);
-    file.writeFromSync(buffer);
-    file.truncateSync(buffer.length);
-    file.unlockSync();
-    file.closeSync();
+    try {
+      file.lockSync(FileLock.blockingExclusive);
+      try {
+        file.setPositionSync(0);
+        file.writeFromSync(buffer);
+        file.truncateSync(buffer.length);
+      } finally {
+        // Always release the lock, even if the write failed (e.g. disk full).
+        try {
+          file.unlockSync();
+        } catch (_) {}
+      }
+    } finally {
+      // Always release the handle so a failed write doesn't leak it.
+      try {
+        file.closeSync();
+      } catch (_) {}
+    }
   }
 
   Future<Map<String, dynamic>?> _readFile(String fileKey) async {
@@ -60,6 +77,10 @@ class StoreImpl with Store {
   }
 
   Future<RandomAccessFile?> _getFile(String fileKey, {bool create = false}) async {
+    final opener = _fileOpener;
+    if (opener != null) {
+      return opener(fileKey, create: create);
+    }
     final file = File(await _fileName(fileKey));
 
     if (await file.exists()) {
