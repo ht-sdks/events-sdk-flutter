@@ -30,7 +30,8 @@ class HightouchDestination extends DestinationPlugin with Flushable {
     var sentCount = 0;
     var numFailedEvents = 0;
 
-    await Future.forEach(chunkedEvents, (batch) async {
+    for (final batch in chunkedEvents) {
+      if (analytics?.httpClient.waitingForProbe == true) break;
       try {
         final succeeded = await analytics?.httpClient
             .startBatchUpload(analytics!.state.configuration.state.writeKey, batch, host: _apiHost);
@@ -46,7 +47,7 @@ class HightouchDestination extends DestinationPlugin with Flushable {
       } catch (e) {
         numFailedEvents += batch.length;
       }
-    });
+    }
 
     if (sentCount > 0) {
       log("Sent $sentCount events", kind: LogFilterKind.debug);
