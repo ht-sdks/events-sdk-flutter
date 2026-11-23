@@ -272,6 +272,11 @@ class QueueState<T extends JSONSerialisable> extends PersistedState<List<T>> {
     await modifyState((state) async => setState([...state, t]));
   }
 
+  Future removeAll(List<T> removed) {
+    final acknowledged = removed.toSet();
+    return modifyState((current) async => setState(current.where((event) => !acknowledged.contains(event)).toList()));
+  }
+
   void flush({int? number}) {
     setState([]);
   }

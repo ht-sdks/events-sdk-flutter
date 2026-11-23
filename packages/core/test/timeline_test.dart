@@ -37,13 +37,14 @@ class _SlowQueueingDestination extends Plugin {
 class _CapturingHTTPClient extends HTTPClient {
   final List<List<RawEvent>> uploadedBatches = [];
 
+  bool succeeds = true;
   _CapturingHTTPClient(super.analytics);
 
   @override
   Future<bool> startBatchUpload(String writeKey, List<RawEvent> batch,
       {String? host}) async {
     uploadedBatches.add(List.of(batch));
-    return true;
+    return succeeds;
   }
 }
 
@@ -72,6 +73,40 @@ void main() {
       // Prevents spamming the test console.
       LogFactory.logger = Mocks.logTarget();
       SharedPreferences.setMockInitialValues({});
+    });
+
+    test("an unowned legacy queue is retained separately", () async {
+      final legacy = {"queue": [TrackEvent("legacy").toJson()]};
+      final store = MemoryStore({"queue_flushing_plugin": legacy});
+      late _CapturingHTTPClient http;
+      final analytics = Analytics(
+          Configuration("new-source", trackApplicationLifecycleEvents: false,
+              appStateStream: (_) => Mocks.streamSubscription()),
+          store, httpClient: (a) => http = _CapturingHTTPClient(a));
+      await analytics.state.ready;
+      await analytics.track("new");
+      await analytics.flush();
+      expect(http.uploadedBatches.expand((batch) => batch).whereType<TrackEvent>()
+          .map((event) => event.event), ["new"]);
+      expect(await store.getPersisted("queue_flushing_plugin"), legacy);
+    });
+
+    test("a rejected batch is replayed with the same IDs on the next flush", () async {
+      late _CapturingHTTPClient http;
+      final analytics = Analytics(
+          Configuration("source", trackApplicationLifecycleEvents: false,
+              appStateStream: (_) => Mocks.streamSubscription()),
+          MemoryStore(), httpClient: (a) => http = _CapturingHTTPClient(a));
+      await analytics.state.ready;
+      http.succeeds = false;
+      await analytics.track("retry");
+      await analytics.flush();
+      http.succeeds = true;
+      await analytics.flush();
+      await analytics.flush();
+      expect(http.uploadedBatches, hasLength(2));
+      expect(http.uploadedBatches.first.map((e) => e.messageId),
+          http.uploadedBatches.last.map((e) => e.messageId));
     });
 
     test("flush() immediately after an awaited track() uploads the event",

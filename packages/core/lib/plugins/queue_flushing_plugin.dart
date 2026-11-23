@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/logger.dart';
 import 'package:hightouch_events/event.dart';
 import 'package:hightouch_events/plugin.dart';
 import 'package:hightouch_events/state.dart';
@@ -10,18 +13,36 @@ class QueueFlushingPlugin extends UtilityPlugin {
 
   bool _isPendingUpload = false;
   final OnFlush _onFlush;
+  final bool acknowledgeBatches;
 
   // Gets executed last to keep the queue after all timeline processing is done
   /// @param onFlush callback to execute when the queue is flushed (either by reaching the limit or manually) e.g. code to upload events to your destination
-  QueueFlushingPlugin(this._onFlush) : super(PluginType.after);
+  QueueFlushingPlugin(this._onFlush, {this.acknowledgeBatches = false}) : super(PluginType.after);
 
   @override
   configure(Analytics analytics) {
     super.configure(analytics);
 
-    _state = QueueState("queue_flushing_plugin", analytics.store, (json) => eventFromJson(json));
-
+    var key = "queue_flushing_plugin";
+    if (acknowledgeBatches) {
+      final source = base64Url.encode(utf8.encode(analytics.state.configuration.state.writeKey));
+      key = "${key}_$source";
+      _reportUnownedQueue(analytics);
+    }
+    _state = QueueState(key, analytics.store, (json) => eventFromJson(json));
     _state!.init(analytics.error, true);
+  }
+
+  Future<void> _reportUnownedQueue(Analytics analytics) async {
+    try {
+      await analytics.store.ready;
+      final old = await analytics.store.getPersisted("queue_flushing_plugin");
+      if (old?['queue'] is List && (old!['queue'] as List).isNotEmpty) {
+        log("The legacy upload queue has no source key. Its records are retained separately.", kind: LogFilterKind.warning);
+      }
+    } catch (error) {
+      log("Unable to inspect the legacy upload queue: $error", kind: LogFilterKind.warning);
+    }
   }
 
   @override
@@ -34,18 +55,16 @@ class QueueFlushingPlugin extends UtilityPlugin {
   /// Calls the onFlush callback with the events in the queue
   @override
   flush() async {
-    if (_state != null) {
-      await _state!.ready;
-      final events = await _state!.state;
-      try {
-        if (!_isPendingUpload) {
-          _isPendingUpload = true;
-          await _onFlush(events);
-          _state!.flush();
-        }
-      } finally {
-        _isPendingUpload = false;
-      }
+    final state = _state;
+    if (state == null || _isPendingUpload) return;
+    _isPendingUpload = true;
+    try {
+      await state.ready;
+      final events = await state.events;
+      await _onFlush(events);
+      if (!acknowledgeBatches) await dequeue(events);
+    } finally {
+      _isPendingUpload = false;
     }
   }
 
@@ -53,10 +72,6 @@ class QueueFlushingPlugin extends UtilityPlugin {
   /// @param events events to remove
   Future dequeue(List<RawEvent> eventsToRemove) async {
     await _state!.ready;
-    final events = await _state!.events;
-    for (var event in eventsToRemove) {
-      events.remove(event);
-    }
-    _state!.setEvents(events);
+    await _state!.removeAll(eventsToRemove);
   }
 }
