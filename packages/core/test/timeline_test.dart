@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:hightouch_events/native_context.dart';
 import 'package:hightouch_events/analytics.dart';
 import 'package:hightouch_events/analytics_platform_interface.dart';
 import 'package:hightouch_events/event.dart';
@@ -48,6 +50,11 @@ class _CapturingHTTPClient extends HTTPClient {
   }
 }
 
+class _WaitingPlatform extends MockPlatform {
+  @override
+  Future<NativeContext> getContext({bool collectDeviceId = false}) => Completer<NativeContext>().future;
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -73,6 +80,37 @@ void main() {
       // Prevents spamming the test console.
       LogFactory.logger = Mocks.logTarget();
       SharedPreferences.setMockInitialValues({});
+    });
+
+    test("a restarted client recovers pre-ready identity and excludes callbacks", () async {
+      final records = <String, Map<String, dynamic>>{};
+      final config = Configuration("restart", trackApplicationLifecycleEvents: false,
+          appStateStream: (_) => Mocks.streamSubscription());
+      AnalyticsPlatform.instance = _WaitingPlatform();
+      final first = Analytics(config, MemoryStore(records));
+      await first.identify(userId: "original");
+      await first.track("early");
+      await first.track("session only", enrichment: (e) => e);
+      final saved = records.entries.singleWhere((e) => e.key.startsWith("startup_")).value["events"] as List;
+      expect(saved, hasLength(2));
+      final original = saved.last;
+      await first.cleanup();
+
+      AnalyticsPlatform.instance = MockPlatform();
+      late _CapturingHTTPClient http;
+      final next = Analytics(config, MemoryStore(records), httpClient: (a) => http = _CapturingHTTPClient(a));
+      await next.state.ready;
+      await next.track("ready");
+      await next.flush();
+
+      final tracks = http.uploadedBatches.expand((b) => b).whereType<TrackEvent>();
+      final early = tracks.singleWhere((event) => event.event == "early");
+      expect(early.messageId, original["messageId"]);
+      expect(early.timestamp, original["timestamp"]);
+      expect(early.anonymousId, original["anonymousId"]);
+      expect(early.userId, "original");
+      expect(tracks.any((event) => event.event == "session only"), isFalse);
+      await next.cleanup();
     });
 
     test("an unowned legacy queue is retained separately", () async {

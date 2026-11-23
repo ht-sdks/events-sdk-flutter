@@ -1,3 +1,4 @@
+import 'package:hightouch_events/analytics.dart';
 import 'package:hightouch_events/event.dart';
 import 'package:hightouch_events/plugin.dart';
 import 'package:hightouch_events/state.dart';
@@ -5,9 +6,16 @@ import 'package:hightouch_events/state.dart';
 class InjectUserInfo extends PlatformPlugin {
   InjectUserInfo() : super(PluginType.before);
 
+  static final captured = Expando<bool>();
+
   @override
   Future<RawEvent> execute(RawEvent event) async {
-    final userInfo = await analytics!.state.userInfo.state;
+    if (captured[event] == true) return event;
+    return apply(analytics!, event);
+  }
+
+  static Future<RawEvent> apply(Analytics client, RawEvent event) async {
+    final userInfo = await client.state.userInfo.state;
     event.anonymousId = userInfo.anonymousId;
     if (event.type == EventType.identify) {
       final identityEvent = event as IdentifyEvent;
@@ -16,7 +24,7 @@ class InjectUserInfo extends PlatformPlugin {
               ? mergeUserTraits(identityEvent.traits as UserTraits, userInfo.userTraits as UserTraits)
               : identityEvent.traits)
           : userInfo.userTraits;
-      analytics!.state.userInfo.setState(UserInfo(event.anonymousId ?? userInfo.anonymousId,
+      client.state.userInfo.setState(UserInfo(event.anonymousId ?? userInfo.anonymousId,
           userId: event.userId ?? userInfo.userId,
           userTraits: mergedTraits,
           groupTraits: userInfo.groupTraits));
@@ -25,7 +33,7 @@ class InjectUserInfo extends PlatformPlugin {
     } else if (event.type == EventType.alias) {
       final previousAnonId = userInfo.anonymousId;
       final previousUserId = userInfo.userId;
-      analytics!.state.userInfo.setState(UserInfo(event.anonymousId ?? userInfo.anonymousId,
+      client.state.userInfo.setState(UserInfo(event.anonymousId ?? userInfo.anonymousId,
           userId: event.userId, userTraits: userInfo.userTraits, groupTraits: userInfo.groupTraits));
       (event as AliasEvent).previousId = previousUserId ?? previousAnonId;
     } else if (event.type == EventType.group) {
@@ -35,7 +43,7 @@ class InjectUserInfo extends PlatformPlugin {
               ? mergeGroupTraits(groupEvent.traits as GroupTraits, userInfo.groupTraits as GroupTraits)
               : groupEvent.traits)
           : userInfo.groupTraits;
-      analytics!.state.userInfo.setState(UserInfo(event.anonymousId ?? userInfo.anonymousId,
+      client.state.userInfo.setState(UserInfo(event.anonymousId ?? userInfo.anonymousId,
           userId: event.userId ?? userInfo.userId,
           userTraits: userInfo.userTraits,
           groupTraits: mergedTraits));
