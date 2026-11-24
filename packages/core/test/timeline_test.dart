@@ -75,6 +75,22 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
+    test("an unowned legacy queue is retained separately", () async {
+      final legacy = {"queue": [TrackEvent("legacy").toJson()]};
+      final store = MemoryStore({"queue_flushing_plugin": legacy});
+      late _CapturingHTTPClient http;
+      final analytics = Analytics(
+          Configuration("new-source", trackApplicationLifecycleEvents: false,
+              appStateStream: (_) => Mocks.streamSubscription()),
+          store, httpClient: (a) => http = _CapturingHTTPClient(a));
+      await analytics.state.ready;
+      await analytics.track("new");
+      await analytics.flush();
+      expect(http.uploadedBatches.expand((batch) => batch).whereType<TrackEvent>()
+          .map((event) => event.event), ["new"]);
+      expect(await store.getPersisted("queue_flushing_plugin"), legacy);
+    });
+
     test("a rejected batch is replayed with the same IDs on the next flush", () async {
       late _CapturingHTTPClient http;
       final analytics = Analytics(

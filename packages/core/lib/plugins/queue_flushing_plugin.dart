@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:hightouch_events/analytics.dart';
+import 'package:hightouch_events/logger.dart';
 import 'package:hightouch_events/event.dart';
 import 'package:hightouch_events/plugin.dart';
 import 'package:hightouch_events/state.dart';
@@ -20,9 +23,26 @@ class QueueFlushingPlugin extends UtilityPlugin {
   configure(Analytics analytics) {
     super.configure(analytics);
 
-    _state = QueueState("queue_flushing_plugin", analytics.store, (json) => eventFromJson(json));
-
+    var key = "queue_flushing_plugin";
+    if (acknowledgeBatches) {
+      final source = base64Url.encode(utf8.encode(analytics.state.configuration.state.writeKey));
+      key = "${key}_$source";
+      _reportUnownedQueue(analytics);
+    }
+    _state = QueueState(key, analytics.store, (json) => eventFromJson(json));
     _state!.init(analytics.error, true);
+  }
+
+  Future<void> _reportUnownedQueue(Analytics analytics) async {
+    try {
+      await analytics.store.ready;
+      final old = await analytics.store.getPersisted("queue_flushing_plugin");
+      if (old?['queue'] is List && (old!['queue'] as List).isNotEmpty) {
+        log("The legacy upload queue has no source key. Its records are retained separately.", kind: LogFilterKind.warning);
+      }
+    } catch (error) {
+      log("Unable to inspect the legacy upload queue: $error", kind: LogFilterKind.warning);
+    }
   }
 
   @override
