@@ -31,7 +31,6 @@ class HightouchDestination extends DestinationPlugin with Flushable {
     var numFailedEvents = 0;
 
     for (final batch in chunkedEvents) {
-      if (analytics?.httpClient.waitingForProbe == true) break;
       try {
         final succeeded = await analytics?.httpClient
             .startBatchUpload(analytics!.state.configuration.state.writeKey, batch, host: _apiHost);

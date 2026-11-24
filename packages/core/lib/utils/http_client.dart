@@ -13,14 +13,6 @@ class HTTPClient {
 
   final WeakReference<Analytics> _analytics;
 
-  DateTime? _nextProbe;
-  int _probeDelay = 1;
-  bool get waitingForProbe => _nextProbe?.isAfter(DateTime.now()) == true;
-  void _deferProbe() {
-    _nextProbe = DateTime.now().add(Duration(seconds: _probeDelay));
-    _probeDelay = (_probeDelay * 2).clamp(1, 60).toInt();
-  }
-
   final _permanentRejections = Expando<bool>();
 
   bool permanentlyRejected(List<RawEvent> batch) => _permanentRejections[batch] == true;
@@ -40,7 +32,6 @@ class HTTPClient {
   ///   - batch: The array of the events, considered a batch of events.
   ///   - completion: The closure executed when done. Passes if the task should be retried or not if failed.
   Future<bool> startBatchUpload(String writeKey, List<RawEvent> batch, {String? host}) async {
-    if (waitingForProbe) return false;
     _permanentRejections[batch] = null;
     final apihost = _analytics.target!.state.configuration.state.apiHost ?? host ?? defaultAPIHost;
     Uri uploadURL = _url(apihost, "/v1/batch");
@@ -57,18 +48,11 @@ class HTTPClient {
       var response = await f;
 
       final status = response.statusCode;
-      if (status == 401 || status == 403 || status == 404) {
-        _deferProbe();
-        log("HTTP $status. Check the write key and endpoint. Events will be retried.", kind: LogFilterKind.error);
-      } else if (_nextProbe != null && (status == 408 || status == 429 || (status >= 500 && status < 600))) {
-        _deferProbe();
-      } else if (status >= 400 && status < 500 && status != 408 && status != 429) {
+      if (status >= 400 && status < 500 && status != 408 && status != 429) {
         _permanentRejections[batch] = true;
       }
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        _nextProbe = null;
-        _probeDelay = 1;
         return true;
       } else if (response.statusCode < 400) {
         reportInternalError(NetworkUnexpectedHTTPCode(response.statusCode), analytics: _analytics.target);
@@ -81,7 +65,6 @@ class HTTPClient {
         return false;
       }
     } catch (error) {
-      if (_nextProbe != null) _deferProbe();
       log("Error uploading request ${error.toString()}", kind: LogFilterKind.error);
       return false;
     }
