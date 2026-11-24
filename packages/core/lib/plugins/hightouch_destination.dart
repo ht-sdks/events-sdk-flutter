@@ -36,13 +36,11 @@ class HightouchDestination extends DestinationPlugin with Flushable {
             .startBatchUpload(analytics!.state.configuration.state.writeKey, batch, host: _apiHost);
         if (succeeded == true) {
           sentCount += batch.length;
-          await _queuePlugin.dequeue(batch);
         } else {
           numFailedEvents += batch.length;
-          if (analytics?.httpClient.permanentlyRejected(batch) == true) {
-            await _queuePlugin.dequeue(batch);
-          }
+          if (analytics?.httpClient.permanentlyRejected(batch) != true) continue;
         }
+        await _queuePlugin.dequeue(batch);
       } catch (e) {
         numFailedEvents += batch.length;
       }
