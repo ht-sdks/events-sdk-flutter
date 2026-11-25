@@ -15,7 +15,7 @@ class HightouchDestination extends DestinationPlugin with Flushable {
   String? _apiHost;
 
   HightouchDestination() : super(hightouchDestinationKey) {
-    _queuePlugin = QueueFlushingPlugin(_sendEvents);
+    _queuePlugin = QueueFlushingPlugin(_sendEvents, acknowledgeBatches: true);
   }
 
   Future _sendEvents(List<RawEvent> events) async {
@@ -27,26 +27,27 @@ class HightouchDestination extends DestinationPlugin with Flushable {
         events, analytics?.state.configuration.state.maxBatchSize ?? maxEventsPerBatch,
         maxKB: maxPayloadSizeInKb);
 
-    final List<RawEvent> sentEvents = [];
+    var sentCount = 0;
     var numFailedEvents = 0;
 
-    await Future.forEach(chunkedEvents, (batch) async {
+    for (final batch in chunkedEvents) {
       try {
         final succeeded = await analytics?.httpClient
             .startBatchUpload(analytics!.state.configuration.state.writeKey, batch, host: _apiHost);
-        if (succeeded == null || !succeeded) {
+        if (succeeded == true) {
+          sentCount += batch.length;
+        } else {
           numFailedEvents += batch.length;
+          if (analytics?.httpClient.permanentlyRejected(batch) != true) continue;
         }
-        sentEvents.addAll(batch);
+        await _queuePlugin.dequeue(batch);
       } catch (e) {
         numFailedEvents += batch.length;
-      } finally {
-        _queuePlugin.dequeue(sentEvents);
       }
-    });
+    }
 
-    if (sentEvents.isNotEmpty) {
-      log("Sent ${sentEvents.length} events", kind: LogFilterKind.debug);
+    if (sentCount > 0) {
+      log("Sent $sentCount events", kind: LogFilterKind.debug);
     }
 
     if (numFailedEvents > 0) {
