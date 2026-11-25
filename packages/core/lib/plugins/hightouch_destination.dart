@@ -72,6 +72,8 @@ class HightouchDestination extends DestinationPlugin with Flushable {
     _apiHost = settings[hightouchDestinationKey]?['apiHost'];
   }
 
+  Future<void> waitForPendingWrites() => _queuePlugin.waitForPendingWrites();
+
   @override
   flush() {
     return _queuePlugin.flush();
