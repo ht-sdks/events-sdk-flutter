@@ -100,15 +100,6 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
   final NullableStateNotifier _notifier = NullableStateNotifier<T>();
   ErrorHandler? _errorHandler;
   Future? _persistance;
-  Object? _lastWriteError;
-
-  Future<void> waitForPendingWrites() async {
-    while (_persistance != null) {
-      await _persistance;
-    }
-    final error = _lastWriteError;
-    if (error != null) throw StorageUnableToWrite("$_key: $error");
-  }
   bool _hasUpdated = false;
   final String _key;
   Completer<T>? _getCompleter;
@@ -138,9 +129,7 @@ abstract class PersistedState<T> implements AsyncStateNotifier<T> {
   /// Persists [value], routing any write failure (e.g. disk full) to the error
   /// handler instead of leaving it as an unhandled async error.
   Future _persist(T value) {
-    _lastWriteError = null;
     return _store.setPersisted(_key, toJson(value)).catchError((Object error) {
-      _lastWriteError = error;
       _errorHandler?.call(StorageUnableToWrite("$_key: $error"));
     }).whenComplete(_whenPersistenceComplete);
   }

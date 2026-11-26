@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:hightouch_events/client.dart';
 import 'package:hightouch_events/errors.dart';
@@ -42,37 +41,8 @@ class Analytics with ClientMethods {
   bool _isInitialized = false;
   late FlushPolicyExecuter _flushPolicyExecuter;
   final List<RawEvent> _pendingEvents = [];
-  Future<void> _startupWork = Future.value();
-  bool _acceptingLive = false;
-  bool _restoredStartup = false;
-  String get _startupKey =>
-      'startup_${base64Url.encode(utf8.encode(state.configuration.state.writeKey))}';
-
-  Future<void> _serializeStartup(Future<void> Function() operation) {
-    final next = _startupWork.then((_) => operation());
-    _startupWork = next.catchError((Object e) { error(ErrorLoadingStorage(e)); });
-    return next;
-  }
-
-  Future<void> _restoreStartup() async {
-    if (_restoredStartup) return;
-    if (state.configuration.state.storageJson == true) {
-      await store.ready;
-      final saved = await store.getPersisted(_startupKey);
-      final restored = (saved?['events'] as List? ?? []).map((item) => eventFromJson(item));
-      _pendingEvents.insertAll(0, restored);
-    }
-    _restoredStartup = true;
-  }
-
-  Future<void> _saveStartup() async {
-    if (state.configuration.state.storageJson == true) {
-      await store.setPersisted(_startupKey, {
-        'events': _pendingEvents.where((event) => event.enrichment == null)
-            .map((event) => event.toJson()).toList()
-      });
-    }
-  }
+  Future<void>? _startupIdentity;
+  bool _pluginsReady = false;
   final _onContextLoaded = NotifierImpl<ContextUpdateType>();
   final _onPluginLoaded = NotifierImpl<Plugin>();
   final Timeline _timeline;
@@ -125,7 +95,6 @@ class Analytics with ClientMethods {
   /// Executes when the state store is initialized.
   /// @param isReady
   void _onStateReady() {
-    if (_destroyed) return;
     if (state.configuration.state.trackDeeplinks) {
       AnalyticsPlatform.instance.linkStream.listen((event) {
         if (state.configuration.state.trackDeeplinks) {
@@ -143,21 +112,14 @@ class Analytics with ClientMethods {
       _addPlugin(plugin);
     }
 
-    _serializeStartup(() async {
-      await _restoreStartup();
-      _acceptingLive = true;
-      while (_pendingEvents.isNotEmpty && !_destroyed) {
-        final event = _pendingEvents.first;
-        InjectUserInfo.captured[event] = true;
-        await _timeline.process(event);
-        for (final destination in getPlugins(PluginType.destination).whereType<HightouchDestination>()) {
-          await destination.waitForPendingWrites();
-        }
-        if (_destroyed) return;
-        _pendingEvents.removeAt(0);
-        await _saveStartup();
+    _pluginsReady = true;
+    _startupIdentity = (_startupIdentity ?? Future.value()).then((_) {
+      for (final event in _pendingEvents) {
+        _timeline.process(event);
       }
-    }).ignore();
+      _pendingEvents.clear();
+      _startupIdentity = null;
+    });
   }
 
   /// Registers a callback for when the client has loaded the device context. This happens at the startup of the app, but
@@ -244,6 +206,7 @@ class Analytics with ClientMethods {
   }
 
   Future<void> _performReset({bool? resetAnonymousId = true}) async {
+    if (_startupIdentity != null) await _startupIdentity;
     final anonymousId =
         resetAnonymousId == true ? const Uuid().v4() : (await state.userInfo.state).anonymousId;
 
@@ -450,29 +413,22 @@ class Analytics with ClientMethods {
     if (enrichment != null) {
       event.enrichment = enrichment;
     }
-    if (_acceptingLive) {
+    if (_pluginsReady) {
+      if (_startupIdentity != null) await _startupIdentity;
       _flushPolicyExecuter.notify(event);
       return _timeline.process(event);
-    } else {
-      await _serializeStartup(() async {
-        if (_acceptingLive) {
-          _flushPolicyExecuter.notify(event);
-          await _timeline.process(event);
-          return;
-        }
-        await _restoreStartup();
-        await InjectUserInfo.apply(this, event);
-        InjectUserInfo.captured[event] = true;
-        _pendingEvents.add(event);
-        if (enrichment == null) {
-          await _saveStartup();
-        } else {
-          log('Startup events with enrichment callbacks can only be replayed in this session.',
-              kind: LogFilterKind.warning);
-        }
-      });
-      return event;
     }
+
+    // Apply identify, alias, and group in call order before a later reset can
+    // change the identity attached to buffered events.
+    final capture = (_startupIdentity ?? Future<void>.value()).then((_) async {
+      await InjectUserInfo.apply(this, event);
+      InjectUserInfo.captured[event] = true;
+      if (!_destroyed) _pendingEvents.add(event);
+    });
+    _startupIdentity = capture.then<void>((_) {}, onError: (Object _, StackTrace __) {});
+    await capture;
+    return event;
   }
 
   /// AppState event listener. Called whenever the app state changes.

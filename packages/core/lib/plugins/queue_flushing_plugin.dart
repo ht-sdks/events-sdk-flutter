@@ -32,10 +32,6 @@ class QueueFlushingPlugin extends UtilityPlugin {
     return event;
   }
 
-  Future<void> waitForPendingWrites() async {
-    await _state?.waitForPendingWrites();
-  }
-
   /// Calls the onFlush callback with the events in the queue
   @override
   flush() async {
