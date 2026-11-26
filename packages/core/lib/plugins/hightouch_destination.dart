@@ -13,6 +13,15 @@ const hightouchDestinationKey = 'Hightouch.io';
 class HightouchDestination extends DestinationPlugin with Flushable {
   late final QueueFlushingPlugin _queuePlugin;
   String? _apiHost;
+  final _lastFailure = Expando<Stopwatch>();
+  static const _retryDelay = Duration(seconds: 1);
+
+  void _defer(List<RawEvent> batch) {
+    final elapsed = Stopwatch()..start();
+    for (final event in batch) {
+      _lastFailure[event] = elapsed;
+    }
+  }
 
   HightouchDestination() : super(hightouchDestinationKey) {
     _queuePlugin = QueueFlushingPlugin(_sendEvents, acknowledgeBatches: true);
@@ -23,25 +32,35 @@ class HightouchDestination extends DestinationPlugin with Flushable {
       return;
     }
 
+    final eligible = events.where((event) {
+      final wait = _lastFailure[event];
+      return wait == null || wait.elapsed >= _retryDelay;
+    });
     final List<List<RawEvent>> chunkedEvents = chunk(
-        events, analytics?.state.configuration.state.maxBatchSize ?? maxEventsPerBatch,
+        eligible.toList(), analytics?.state.configuration.state.maxBatchSize ?? maxEventsPerBatch,
         maxKB: maxPayloadSizeInKb);
 
     var sentCount = 0;
     var numFailedEvents = 0;
 
     for (final batch in chunkedEvents) {
+      var uploading = true;
       try {
         final succeeded = await analytics?.httpClient
             .startBatchUpload(analytics!.state.configuration.state.writeKey, batch, host: _apiHost);
+        uploading = false;
         if (succeeded == true) {
           sentCount += batch.length;
         } else {
           numFailedEvents += batch.length;
-          if (analytics?.httpClient.permanentlyRejected(batch) != true) continue;
+          if (analytics?.httpClient.permanentlyRejected(batch) != true) {
+            _defer(batch);
+            continue;
+          }
         }
         await _queuePlugin.dequeue(batch);
       } catch (e) {
+        if (uploading) _defer(batch);
         numFailedEvents += batch.length;
       }
     }

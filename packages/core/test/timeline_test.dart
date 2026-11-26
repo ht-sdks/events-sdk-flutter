@@ -75,7 +75,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    test("a rejected batch is replayed with the same IDs on the next flush", () async {
+    test("a failed batch backs off while fresh events can flush", () async {
       late _CapturingHTTPClient http;
       final analytics = Analytics(
           Configuration("source", trackApplicationLifecycleEvents: false,
@@ -85,10 +85,17 @@ void main() {
       http.succeeds = false;
       await analytics.track("retry");
       await analytics.flush();
+      await Future<void>.delayed(const Duration(seconds: 1));
+      await analytics.flush();
       http.succeeds = true;
+      await analytics.track("fresh");
+      await analytics.flush();
+      expect(http.uploadedBatches, hasLength(3));
+      expect(http.uploadedBatches[2].whereType<TrackEvent>().single.event, "fresh");
+      await Future<void>.delayed(const Duration(seconds: 1));
       await analytics.flush();
       await analytics.flush();
-      expect(http.uploadedBatches, hasLength(2));
+      expect(http.uploadedBatches, hasLength(4));
       expect(http.uploadedBatches.first.map((e) => e.messageId),
           http.uploadedBatches.last.map((e) => e.messageId));
     });
