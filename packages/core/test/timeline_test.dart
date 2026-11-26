@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:hightouch_events/native_context.dart';
 import 'package:hightouch_events/analytics.dart';
 import 'package:hightouch_events/analytics_platform_interface.dart';
 import 'package:hightouch_events/event.dart';
@@ -48,6 +50,13 @@ class _CapturingHTTPClient extends HTTPClient {
   }
 }
 
+class _WaitingPlatform extends MockPlatform {
+  final context = Completer<NativeContext>();
+
+  @override
+  Future<NativeContext> getContext({bool collectDeviceId = false}) => context.future;
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -73,6 +82,25 @@ void main() {
       // Prevents spamming the test console.
       LogFactory.logger = Mocks.logTarget();
       SharedPreferences.setMockInitialValues({});
+    });
+
+    test("an event queued before reset keeps its original anonymous ID", () async {
+      final platform = _WaitingPlatform();
+      AnalyticsPlatform.instance = platform;
+      final analytics = Analytics(
+          Configuration("source", trackApplicationLifecycleEvents: false,
+              appStateStream: (_) => Mocks.streamSubscription()), MemoryStore());
+      final delivered = Completer<RawEvent>();
+      final original = (await analytics.state.userInfo.state).anonymousId;
+      await analytics.track("early", enrichment: (event) {
+        delivered.complete(event);
+        return event;
+      });
+      await analytics.reset();
+      expect((await analytics.state.userInfo.state).anonymousId, isNot(original));
+      platform.context.complete(await MockPlatform().getContext());
+      expect((await delivered.future).anonymousId, original);
+      await analytics.cleanup();
     });
 
     test("a rejected batch is replayed with the same IDs on the next flush", () async {

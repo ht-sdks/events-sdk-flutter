@@ -41,6 +41,8 @@ class Analytics with ClientMethods {
   bool _isInitialized = false;
   late FlushPolicyExecuter _flushPolicyExecuter;
   final List<RawEvent> _pendingEvents = [];
+  Future<void>? _startupIdentity;
+  bool _pluginsReady = false;
   final _onContextLoaded = NotifierImpl<ContextUpdateType>();
   final _onPluginLoaded = NotifierImpl<Plugin>();
   final Timeline _timeline;
@@ -110,11 +112,14 @@ class Analytics with ClientMethods {
       _addPlugin(plugin);
     }
 
-    // Send all events in the queue
-    for (var e in _pendingEvents) {
-      _timeline.process(e);
-    }
-    _pendingEvents.clear();
+    _pluginsReady = true;
+    _startupIdentity = (_startupIdentity ?? Future.value()).then((_) {
+      for (final event in _pendingEvents) {
+        _timeline.process(event);
+      }
+      _pendingEvents.clear();
+      _startupIdentity = null;
+    });
   }
 
   /// Registers a callback for when the client has loaded the device context. This happens at the startup of the app, but
@@ -201,6 +206,7 @@ class Analytics with ClientMethods {
   }
 
   Future<void> _performReset({bool? resetAnonymousId = true}) async {
+    if (_startupIdentity != null) await _startupIdentity;
     final anonymousId =
         resetAnonymousId == true ? const Uuid().v4() : (await state.userInfo.state).anonymousId;
 
@@ -407,13 +413,22 @@ class Analytics with ClientMethods {
     if (enrichment != null) {
       event.enrichment = enrichment;
     }
-    if (state.isReady) {
+    if (_pluginsReady) {
+      if (_startupIdentity != null) await _startupIdentity;
       _flushPolicyExecuter.notify(event);
       return _timeline.process(event);
-    } else {
-      _pendingEvents.add(event);
-      return event;
     }
+
+    // Apply identify, alias, and group in call order before a later reset can
+    // change the identity attached to buffered events.
+    final capture = (_startupIdentity ?? Future<void>.value()).then((_) async {
+      await InjectUserInfo.apply(this, event);
+      InjectUserInfo.captured[event] = true;
+      if (!_destroyed) _pendingEvents.add(event);
+    });
+    _startupIdentity = capture.then<void>((_) {}, onError: (Object _, StackTrace __) {});
+    await capture;
+    return event;
   }
 
   /// AppState event listener. Called whenever the app state changes.
